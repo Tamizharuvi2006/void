@@ -149,8 +149,9 @@
           entered: false,
           portalPhase: 'waiting', // 'waiting' -> 'inside' -> 'done'
           insideTimer: 0,
-          insideDuration: 15,
+          insideDuration: 60, // 60s survive or kill mini-boss
           pulse: 0,
+          challengeType: Math.random() < 0.5 ? 'survive' : 'miniboss',
         };
         break;
       }
@@ -195,21 +196,6 @@
           // +2 levels
           for (let i = 0; i < 2; i++) {
             state.xp = state.xpToNext; // Force level up
-          }
-          break;
-        case 'corruption_storm':
-          state.dustEarned += 20 + state.wave * 5;
-          state.hp = Math.min(state.hp + 20, state.maxHp);
-          break;
-        case 'elite_hunt':
-          // Spawn rare chest near player
-          if (typeof spawnChest === 'function') spawnChest(state.px + _rand(-60, 60), state.py + _rand(-60, 60), 'boss');
-          break;
-        case 'relic_defense':
-          state.dustEarned += 30 + state.wave * 5;
-          // Big XP burst
-          const gemCount = 12;
-          for (let i = 0; i < gemCount; i++) {
             state.gems.push({
               x: state.event.data.x + _rand(-30, 30),
               y: state.event.data.y + _rand(-30, 30),
@@ -218,11 +204,11 @@
           }
           break;
         case 'void_portal':
-          // Legendary reward: +3 levels
-          for (let i = 0; i < 3; i++) {
-            state.xp = state.xpToNext;
-          }
-          state.dustEarned += 50 + state.wave * 8;
+          // Legendary reward: +50 Max HP & +25% Damage
+          state.maxHp += 50; 
+          state.hp += 50; 
+          state.dmgMult += 0.25;
+          _showEventToast('Void Portal Complete!', 'Legendary Reward: +50 Max HP & +25% Damage!', '#ffc845');
           break;
       }
 
@@ -400,28 +386,77 @@
             d.portalPhase = 'inside';
             d.entered = true;
             d.insideTimer = d.insideDuration;
-            // Spawn hard enemies around player
-            for (let i = 0; i < 8 + state.wave; i++) {
-              const a = Math.random() * TWO_PI;
-              const sd = _rand(200, 400);
-              if (typeof spawnEnemy === 'function') spawnEnemy(_pick(['shade', 'knight', 'archer']));
+            
+            // Teleport to mini arena
+            state.portalOldPx = state.px;
+            state.portalOldPy = state.py;
+            state.px = 10000;
+            state.py = 10000;
+            state.portalChallengeActive = true; // Pauses wave timers
+            
+            // Clear current enemies (they are back in the main arena, but it's easier to just despawn them)
+            state.enemies = [];
+            state.projectiles = [];
+
+            if (d.challengeType === 'miniboss') {
+              if (typeof spawnEnemy === 'function') {
+                for(let i=0; i<3; i++) spawnEnemy('knight');
+                // Mini boss uses boss archetype but smaller
+                const mb = { ...ENEMY_TYPES['boss'], hp: 2000, speed: 45, radius: 24, dmg: 25 };
+                // Actually, to avoid mutating ENEMY_TYPES, we spawn a regular enemy and modify it
+                spawnEnemy('shade'); 
+                const spawned = state.enemies[state.enemies.length-1];
+                spawned.hp = 1500; spawned.maxHp = 1500; spawned.radius = 28; spawned.color = '#ff00ff'; spawned.isMiniBoss = true;
+              }
+              _showEventToast('Void Portal', 'Kill the Void Abomination!', '#b44dff');
+            } else {
+              _showEventToast('Void Portal', 'Survive for 60 seconds!', '#b44dff');
             }
+
             if (typeof playSound === 'function') playSound('boss');
           }
         } else if (d.portalPhase === 'inside') {
           d.insideTimer -= dt;
-          // Update the event timer to show inside timer
           evt.timer = d.insideTimer;
           evt.maxTimer = d.insideDuration;
-          // Survived the challenge
-          if (d.insideTimer <= 0) {
+          
+          // Clamp player to mini arena
+          state.px = _clamp(state.px, 10000 - 800, 10000 + 800);
+          state.py = _clamp(state.py, 10000 - 800, 10000 + 800);
+
+          let won = false;
+          if (d.challengeType === 'survive') {
+            if (d.insideTimer <= 0) won = true;
+            else if (Math.random() < 0.02 && typeof spawnEnemy === 'function') spawnEnemy(_pick(['wraith', 'shade', 'specter']));
+          } else {
+            // Miniboss
+            const mbAlive = state.enemies.some(e => e.isMiniBoss);
+            if (!mbAlive) won = true;
+            if (d.insideTimer <= 0 && mbAlive) {
+               // Failed miniboss? Let's just say they failed
+               completeEvent(state, false);
+               _teleportBack(state);
+               return;
+            }
+          }
+
+          if (won) {
             d.portalPhase = 'done';
             completeEvent(state, true);
+            _teleportBack(state);
           }
         }
         break;
       }
     }
+  }
+
+  function _teleportBack(state) {
+    state.px = state.portalOldPx;
+    state.py = state.portalOldPy;
+    state.portalChallengeActive = false;
+    state.enemies = []; // clear mini arena enemies
+    state.projectiles = [];
   }
 
   // ─── Deal damage to elite hunt champion ───

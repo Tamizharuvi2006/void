@@ -121,6 +121,16 @@
         </div>
       </section>
 
+      <!-- Awakening Modal -->
+      <section id="awakening-modal" class="overlay hidden" aria-modal="true">
+        <div class="overlay-dim"></div>
+        <div class="overlay-panel class-panel">
+          <h2 class="overlay-title awk-title">Weapon Awakening</h2>
+          <p class="overlay-sub">Choose a weapon to transform based on your Path</p>
+          <div id="awakening-cards" class="class-cards"></div>
+        </div>
+      </section>
+
       <!-- Game Over -->
       <section id="gameover-modal" class="overlay hidden" aria-modal="true">
         <div class="overlay-dim"></div>
@@ -171,10 +181,15 @@
       </section>
     </main>
 
+    <!-- Audio & Scripts -->
+    <audio id="bgm" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop crossorigin="anonymous"></audio>
+
     <script src="./src/events.js"></script>
     <script src="./src/lore.js"></script>
     <script src="./src/classes.js"></script>
     <script src="./src/world.js"></script>
+    <script src="./src/awakenings.js"></script>
+    <script src="./src/director.js"></script>
     <script src="./src/main.js"></script>
   </body>
 </html>

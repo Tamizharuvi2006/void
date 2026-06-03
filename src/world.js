@@ -56,7 +56,7 @@
       icon: '🏚️',
       color: '#7df3ff',
       radius: 22,
-      interactTime: 0,
+      interactTime: 1.5,
     },
     watchtower: {
       name: 'Watchtower',
@@ -75,45 +75,66 @@
       worldInteractTimer: 0,
       worldDialogue: null,     // Active NPC dialogue
       worldChoice: null,       // Active NPC choice
+      discoveredRegions: new Set(),
     };
   }
 
-  // ─── Spawn World Objects for a Wave ───
-  function spawnForWave(state, wave) {
-    // Clear old objects
+  // ─── Spawn World Objects ───
+  function generateInitialWorld(state) {
     state.worldObjects = [];
+    if (!state.discoveredRegions) state.discoveredRegions = new Set();
 
-    if (wave < 2) return; // No objects in first wave
+    // North (Ruins & Crystals)
+    for (let i = 0; i < 5; i++) _spawnObjectInRegion(state, 'ruins', 'north');
+    for (let i = 0; i < 20; i++) _spawnObjectInRegion(state, 'crystal_node', 'north');
+    
+    // East (Watchtowers)
+    for (let i = 0; i < 5; i++) _spawnObjectInRegion(state, 'watchtower', 'east');
+    
+    // West (Shrines)
+    for (let i = 0; i < 10; i++) _spawnObjectInRegion(state, 'shrine', 'west');
+    
+    // Center (Chests)
+    for (let i = 0; i < 8; i++) _spawnObjectInRegion(state, 'chest', 'center');
+    
+    // South Hazard Zones are handled in main loop (updateHazardZones) but we can let them spawn naturally
+  }
 
-    // Number of objects scales with wave
-    const count = Math.min(5, 1 + Math.floor(wave / 3));
-    const types = ['shrine'];
-    if (wave >= 3) types.push('crystal_node');
-    if (wave >= 4) types.push('ruins');
-    if (wave >= 5) types.push('wanderer');
-    if (wave >= 7) types.push('watchtower');
-
-    for (let i = 0; i < count; i++) {
-      const type = _pick(types);
-      const def = WORLD_DEFS[type];
-      // Place far enough from player and from each other
-      let x, y, attempts = 0;
-      do {
-        x = _rand(-ARENA_HALF * 0.7, ARENA_HALF * 0.7);
-        y = _rand(-ARENA_HALF * 0.7, ARENA_HALF * 0.7);
-        attempts++;
-      } while (attempts < 20 && _dist(x, y, state.px, state.py) < 300);
-
-      state.worldObjects.push({
-        id: `${type}_${i}_${wave}`,
-        type,
-        def,
-        x, y,
-        used: false,
-        interactProgress: 0,
-        pulse: _rand(0, TWO_PI),
-      });
+  function _spawnObjectInRegion(state, type, region) {
+    let minX, maxX, minY, maxY;
+    switch(region) {
+      case 'north': minX = -1500; maxX = 1500; minY = -2400; maxY = -600; break;
+      case 'south': minX = -1500; maxX = 1500; minY = 600; maxY = 2400; break;
+      case 'east': minX = 600; maxX = 2400; minY = -1500; maxY = 1500; break;
+      case 'west': minX = -2400; maxX = -600; minY = -1500; maxY = 1500; break;
+      case 'center': minX = -800; maxX = 800; minY = -800; maxY = 800; break;
+      default: minX = -2000; maxX = 2000; minY = -2000; maxY = 2000; break;
     }
+    
+    let x, y, attempts = 0;
+    do {
+      x = _rand(minX, maxX);
+      y = _rand(minY, maxY);
+      attempts++;
+    } while (attempts < 20 && _dist(x, y, state.px, state.py) < 400);
+
+    // If type is chest, just push to chests array if it exists
+    if (type === 'chest') {
+      if (typeof spawnChest === 'function') spawnChest(x, y, 'normal');
+      return;
+    }
+
+    const def = WORLD_DEFS[type];
+    state.worldObjects.push({
+      id: `${type}_${Math.random().toString(36).substr(2,9)}`,
+      type,
+      def,
+      x, y,
+      region,
+      used: false,
+      interactProgress: 0,
+      pulse: _rand(0, TWO_PI),
+    });
   }
 
   // ─── Update ───
@@ -126,9 +147,20 @@
 
       const playerDist = _dist(state.px, state.py, obj.x, obj.y);
 
+      // Discovery Check
+      if (playerDist < 300 && !state.discoveredRegions.has(obj.id)) {
+        state.discoveredRegions.add(obj.id);
+        state.xp += 50; 
+        if (state.xp >= state.xpToNext && typeof showLevelUpUI === 'function') {
+          // just grant the xp safely
+        }
+        _showWorldToast('🗺️', 'Area Discovered!', obj.def.name, '#ffffff');
+        if (typeof playSound === 'function') playSound('achieve');
+      }
+
       // Show interaction prompt when near
       if (playerDist < INTERACT_RADIUS + obj.def.radius) {
-        // Timed interactions (crystal node, watchtower)
+        // Timed interactions (crystal node, watchtower, ruins)
         if (obj.def.interactTime > 0) {
           obj.interactProgress += dt;
           if (obj.interactProgress >= obj.def.interactTime) {
@@ -217,7 +249,7 @@
     if (!modal) { state.mode = 'playing'; return; }
 
     modal.classList.remove('hidden');
-    modal.className = 'overlay lore-overlay';
+    modal.className = 'overlay lore-overlay lost_wanderer';
 
     const speakerEl = document.getElementById('lore-speaker');
     const textEl = document.getElementById('lore-text');
@@ -379,7 +411,7 @@
   // ─── Public API ───
   window.VoidWorld = {
     getDefaultState,
-    spawnForWave,
+    generateInitialWorld,
     update,
     render,
     renderMinimap,

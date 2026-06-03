@@ -1181,18 +1181,71 @@ html, body {
 .lore-choice-icon { font-size: 28px; }
 .lore-choice-name { font-size: 14px; font-weight: 600; letter-spacing: 1px; }
 
-/* Void Eye effect */
+/* Lore visual effects using AI images */
 .lore-overlay.void_eye .lore-dim::before {
-  content: '⦿';
+  content: '';
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: clamp(80px, 20vw, 200px);
-  color: var(--magenta);
-  text-shadow: 0 0 80px rgba(255,45,149,0.6), 0 0 200px rgba(255,45,149,0.2);
+  transform: translate(-50%, -50%);
+  width: min(80vw, 400px);
+  height: min(80vw, 400px);
+  background-image: url('./assets/void_entity.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: voidEyePulse 3s ease-in-out infinite;
   pointer-events: none;
+  
+  /* Blending */
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  filter: drop-shadow(0 0 60px rgba(255,45,149,0.3)) brightness(1.2) contrast(1.2);
+}
+
+.lore-overlay.purple_flash .lore-dim::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(80vw, 400px);
+  height: min(80vw, 400px);
+  background-image: url('./assets/forgotten_one.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: voidEyePulse 4s ease-in-out infinite alternate;
+  pointer-events: none;
+
+  /* Blending */
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  filter: drop-shadow(0 0 60px rgba(125,243,255,0.2)) brightness(1.2) contrast(1.2);
+}
+
+.lore-overlay.lost_wanderer .lore-dim::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(80vw, 400px);
+  height: min(80vw, 400px);
+  background-image: url('./assets/lost_wanderer.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: voidEyePulse 4s ease-in-out infinite alternate;
+  pointer-events: none;
+
+  /* Blending */
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 65%);
+  filter: drop-shadow(0 0 60px rgba(255,200,69,0.2)) brightness(1.1) contrast(1.1);
 }
 @keyframes voidEyePulse {
   0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
@@ -1259,6 +1312,74 @@ html, body {
   font-size: 11px;
   color: rgba(234,244,255,0.7);
   letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════
+   AWAKENING MODAL
+   ═══════════════════════════════════════════ */
+.awk-title {
+  color: var(--white);
+  text-shadow: 0 0 30px rgba(255,255,255,0.4);
+}
+.awakening-card {
+  flex: 0 1 240px;
+  padding: 20px 16px;
+  background: rgba(8, 12, 24, 0.85);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: cardIn 0.5s ease-out both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.awakening-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 40px rgba(255,255,255,0.15);
+}
+.awk-old {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.6;
+}
+.awk-icon { font-size: 24px; }
+.awk-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.awk-arrow {
+  font-size: 16px;
+  animation: bounceY 1.5s infinite;
+}
+@keyframes bounceY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+.awk-new {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.awk-new-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.awk-desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(234,244,255,0.8);
   line-height: 1.4;
 }
 

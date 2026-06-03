@@ -248,19 +248,7 @@ const ENEMY_TYPES = {
   boss:    { name:'Rift Lord',hp:500,speed:35, dmg:20, xp:50,radius:28, color:'#ff2d95', shape:'boss', isBoss:true },
 };
 
-function getWaveEnemies(wave) {
-  const count = Math.floor(8 + wave * 3.5 + wave * wave * 0.15);
-  const types = ['wraith'];
-  if (wave >= 2) types.push('specter');
-  if (wave >= 3) types.push('crawler', 'crawler');
-  if (wave >= 4) types.push('shade');
-  if (wave >= 6) types.push('archer');
-  if (wave >= 8) types.push('knight');
-  const enemies = [];
-  for (let i = 0; i < count; i++) enemies.push(pick(types));
-  if (wave % BOSS_INTERVAL === 0) enemies.push('boss');
-  return enemies;
-}
+
 
 // ─── Game State ───
 let state = null, lastTime = 0, input = {}, cam = { x: 0, y: 0, shake: 0, shakeAngle: 0 };
@@ -292,11 +280,11 @@ function newState() {
     chests: [], hazardZones: [],
     eliteModifiers: ['swift','armored','splitting','teleporter','berserker'],
     runAchievements: new Set(),
-    // v2.0: Merge new system states
     ...( window.VoidEvents ? VoidEvents.getDefaultState() : {} ),
     ...( window.VoidLore ? VoidLore.getDefaultState() : {} ),
     ...( window.VoidClasses ? VoidClasses.getDefaultState() : {} ),
     ...( window.VoidWorld ? VoidWorld.getDefaultState() : {} ),
+    ...( window.VoidDirector ? VoidDirector.getDefaultState() : {} ),
     watchtowerReveal: 0,
     dashCdBase: 3.0,
   };
@@ -508,7 +496,9 @@ function updateShadowClones(dt) {
       const target = findNearest(cx, cy, state.enemies, 250);
       if (target) {
         const ta = angle(cx, cy, target.x, target.y);
-        state.projectiles.push({ x:cx, y:cy, vx:Math.cos(ta)*350, vy:Math.sin(ta)*350, dmg:Math.round(s.dmg*state.dmgMult), radius:4, life:1.5, pierce:0, color:C.ice, owner:wep.defId, trail:[] });
+        const proj = { x:cx, y:cy, vx:Math.cos(ta)*350, vy:Math.sin(ta)*350, dmg:Math.round(s.dmg*state.dmgMult), radius:4, life:1.5, pierce:0, color:C.ice, owner:wep.defId, trail:[] };
+        if (window.VoidAwakenings && wep.awakenedClass) VoidAwakenings.modifyProjectile(state, wep, proj);
+        state.projectiles.push(proj);
       }
     }
   }
@@ -518,6 +508,10 @@ function updateWeapons(dt) {
   for (const wep of state.weapons) {
     wep.timer -= dt;
     if (wep.timer > 0) continue;
+    
+    const prevProjCount = state.projectiles.length;
+    const prevFxCount = state.effects.length;
+    
     const s = getWeaponStats(wep);
     switch (wep.defId) {
       case 'void_bolt': wep.timer = s.cd; fireVoidBolt(wep); break;
@@ -532,19 +526,39 @@ function updateWeapons(dt) {
       case 'spectral_whip': wep.timer = s.cd; fireSpectralWhip(wep); break;
       case 'orbit_shards': case 'shadow_clones': wep.timer = 999; break;
     }
+    
+    if (window.VoidAwakenings && wep.awakenedClass) {
+      for (let i = prevProjCount; i < state.projectiles.length; i++) {
+        VoidAwakenings.modifyProjectile(state, wep, state.projectiles[i]);
+      }
+      for (let i = prevFxCount; i < state.effects.length; i++) {
+        VoidAwakenings.modifyProjectile(state, wep, state.effects[i]);
+      }
+    }
   }
 }
 
 function updateOrbitShards(dt) {
   const wep = state.weapons.find(w => w.defId === 'orbit_shards');
   if (!wep) return;
-  const s = getWeaponStats(wep), baseDmg = Math.round(s.dmg * state.dmgMult);
+  const s = getWeaponStats(wep);
+  let baseDmg = Math.round(s.dmg * state.dmgMult);
+  if (wep.awakenedClass === 'ruin') baseDmg = Math.round(baseDmg * 1.5);
+  
+  const color = wep.awakenedColor || C.violet;
+
   for (let i = 0; i < s.count; i++) {
     const a = state.time * s.speed + (TWO_PI / s.count) * i;
     const sx = state.px + Math.cos(a) * s.radius, sy = state.py + Math.sin(a) * s.radius;
     for (const e of state.enemies) {
       if (e.dead || e.hp <= 0 || e.invuln > 0) continue;
-      if (dist(sx, sy, e.x, e.y) < s.size + e.radius) { dealDamage(e, baseDmg, wep.defId); e.invuln = 0.25; spawnParticles(sx, sy, C.violet, 3, 60); }
+      if (dist(sx, sy, e.x, e.y) < s.size + e.radius) { 
+        dealDamage(e, baseDmg, wep.defId); 
+        e.invuln = 0.25; 
+        spawnParticles(sx, sy, color, 3, 60); 
+        
+        if (wep.awakenedClass === 'eternity') state.hp = Math.min(state.maxHp, state.hp + baseDmg * 0.05); // Heal on hit
+      }
     }
   }
 }
@@ -760,23 +774,7 @@ function updateEnemies(dt) {
 // ═══════════════════════════════════════════
 // WAVE SYSTEM
 // ═══════════════════════════════════════════
-function startNextWave() {
-  state.wave++;
-  state.waveEnemiesQueue = getWaveEnemies(state.wave);
-  state.waveTimer = WAVE_DURATION + state.wave * 0.5;
-  state.spawnTimer = 0;
-  showWaveAnnounce(state.wave);
-  // v2.0: Check lore triggers
-  if (window.VoidLore) {
-    const trigger = VoidLore.checkTriggers(state);
-    if (trigger) {
-      setTimeout(() => VoidLore.startLore(state, trigger), 1500);
-    }
-  }
-  // v2.0: Spawn world objects
-  if (window.VoidWorld) VoidWorld.spawnForWave(state, state.wave);
-  checkAchievements();
-}
+
 
 function showWaveAnnounce(wave) {
   if (waveAnnounceTimeout) clearTimeout(waveAnnounceTimeout);
@@ -786,31 +784,7 @@ function showWaveAnnounce(wave) {
   waveAnnounceTimeout = setTimeout(() => { waveAnnounceEl.classList.add('hidden'); waveAnnounceTimeout = null; }, 1800);
 }
 
-function updateWaves(dt) {
-  if (state.waveEnemiesQueue.length > 0) {
-    state.spawnTimer -= dt;
-    if (state.spawnTimer <= 0) {
-      const batchSize = Math.min(3, state.waveEnemiesQueue.length);
-      for (let i = 0; i < batchSize; i++) spawnEnemy(state.waveEnemiesQueue.pop());
-      state.spawnTimer = Math.max(0.15, 1.5 - state.wave * 0.08);
-    }
-  }
-  state.waveTimer -= dt;
-  // Brief breathing period between waves
-  if (state.waveClearBreather > 0) { state.waveClearBreather -= dt; return; }
-  if (state.waveTimer <= 0 && state.waveEnemiesQueue.length === 0) {
-    // Spawn treasure chest on boss wave clears
-    if (state.wave > 0 && state.wave % BOSS_INTERVAL === 0) {
-      spawnChest(state.px + rand(-100, 100), state.py + rand(-100, 100), 'boss');
-    } else if (state.wave > 0 && state.wave % 3 === 0) {
-      spawnChest(state.px + rand(-150, 150), state.py + rand(-150, 150), 'normal');
-    }
-    // Spawn hazard zone every 4 waves
-    if (state.wave > 0 && state.wave % 4 === 0) spawnHazardZone();
-    state.waveClearBreather = 1.5; // 1.5s breathing room
-    startNextWave();
-  }
-}
+
 
 // ═══════════════════════════════════════════
 // TREASURE CHESTS
@@ -1027,7 +1001,12 @@ function updateEffects(dt) {
     if (fx.life <= 0 && fx.type === 'meteor_warning') {
       for (const e of state.enemies) {
         if (e.dead) continue;
-        if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) dealDamage(e, fx.dmg, fx.sourceId);
+        if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) {
+          let hitDmg = fx.dmg;
+          if (fx.backstab) hitDmg = Math.round(hitDmg * 2.5);
+          dealDamage(e, hitDmg, fx.sourceId);
+          if (fx.healsPlayer) state.hp = Math.min(state.maxHp, state.hp + hitDmg * 0.05);
+        }
       }
       state.effects.push({ type:'nova', x:fx.x, y:fx.y, radius:0, maxRadius:fx.radius*1.3, life:0.4, maxLife:0.4, color:'#ff4060' });
       spawnParticles(fx.x, fx.y, C.fire, 20, 150);
@@ -1044,7 +1023,13 @@ function updateEffects(dt) {
         if (fx.isDamaging && fx.hit) {
           for (const e of state.enemies) {
             if (e.dead || fx.hit.has(e)) continue;
-            if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) { fx.hit.add(e); dealDamage(e, fx.dmg, fx.sourceId); }
+            if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) {
+              fx.hit.add(e);
+              let hitDmg = fx.dmg;
+              if (fx.backstab) hitDmg = Math.round(hitDmg * 2.5);
+              dealDamage(e, hitDmg, fx.sourceId);
+              if (fx.healsPlayer) state.hp = Math.min(state.maxHp, state.hp + hitDmg * 0.05);
+            }
           }
         }
         break;
@@ -1053,7 +1038,14 @@ function updateEffects(dt) {
         for (const e of state.enemies) {
           if (e.dead || fx.hit.has(e)) continue;
           const d = dist(fx.x, fx.y, e.x, e.y);
-          if (Math.abs(d - fx.radius) < 20 + e.radius) { fx.hit.add(e); dealDamage(e, fx.dmg, fx.sourceId); e.slow = fx.slow; e.slowTimer = fx.slowDur; }
+          if (Math.abs(d - fx.radius) < 20 + e.radius) {
+            fx.hit.add(e);
+            let hitDmg = fx.dmg;
+            if (fx.backstab) hitDmg = Math.round(hitDmg * 2.5);
+            dealDamage(e, hitDmg, fx.sourceId);
+            if (fx.healsPlayer) state.hp = Math.min(state.maxHp, state.hp + hitDmg * 0.05);
+            e.slow = fx.slow; e.slowTimer = fx.slowDur;
+          }
         }
         break;
       case 'mine':
@@ -1064,7 +1056,14 @@ function updateEffects(dt) {
         }
         if (fx.triggered && !fx.exploded) {
           fx.exploded = true;
-          for (const e of state.enemies) { if (!e.dead && dist(fx.x, fx.y, e.x, e.y) < fx.blastR + e.radius) dealDamage(e, fx.dmg, fx.sourceId); }
+          for (const e of state.enemies) {
+            if (!e.dead && dist(fx.x, fx.y, e.x, e.y) < fx.blastR + e.radius) {
+              let hitDmg = fx.dmg;
+              if (fx.backstab) hitDmg = Math.round(hitDmg * 2.5);
+              dealDamage(e, hitDmg, fx.sourceId);
+              if (fx.healsPlayer) state.hp = Math.min(state.maxHp, state.hp + hitDmg * 0.05);
+            }
+          }
           state.effects.push({ type:'nova', x:fx.x, y:fx.y, radius:0, maxRadius:fx.blastR, life:0.3, maxLife:0.3, color:'#ff8c42' });
           cam.shake = Math.max(cam.shake, 5); fx.life = 0;
         }
@@ -1090,6 +1089,11 @@ function updateProjectiles(dt) {
     p.x += p.vx * dt; p.y += p.vy * dt;
     // Trail
     if (p.trail) { p.trail.push({ x:p.x, y:p.y }); if (p.trail.length > 6) p.trail.shift(); }
+    if (p.teleports && p.life > 1.8) {
+      const target = findNearest(p.x, p.y, state.enemies, 800);
+      if (target) { p.x = target.x; p.y = target.y; p.teleports = false; spawnParticles(p.x, p.y, p.color, 5, 80); }
+    }
+    
     if (p.owner === 'enemy') {
       if (dist(p.x, p.y, state.px, state.py) < p.radius + PLAYER_RADIUS && state.invuln <= 0) {
         const rawDmg = Math.max(1, p.dmg - state.armor); state.hp -= rawDmg; state.invuln = INVULN_TIME; state.dmgFlash = DAMAGE_FLASH;
@@ -1101,7 +1105,14 @@ function updateProjectiles(dt) {
       for (const e of state.enemies) {
         if (e.dead || e.hp <= 0) continue;
         if (dist(p.x, p.y, e.x, e.y) < p.radius + e.radius) {
-          dealDamage(e, p.dmg, p.owner); spawnParticles(p.x, p.y, p.color, 3, 50);
+          let hitDmg = p.dmg;
+          if (p.backstab) hitDmg = Math.round(hitDmg * 2.5); // 250% damage backstab
+
+          dealDamage(e, hitDmg, p.owner); 
+          spawnParticles(p.x, p.y, p.color, 3, 50);
+          
+          if (p.healsPlayer) state.hp = Math.min(state.maxHp, state.hp + hitDmg * 0.05);
+          
           if (p.pierce > 0) p.pierce--; else { state.projectiles.splice(i, 1); } break;
         }
       }
@@ -1181,7 +1192,12 @@ function startGame() {
   menuEl.classList.add('hidden'); gameoverModal.classList.add('hidden'); levelupModal.classList.add('hidden');
   hudEl.style.display = ''; weaponBarEl.style.display = '';
   minimapCanvas.style.display = ''; vignetteEl.style.display = '';
-  syncWeaponBar(); startNextWave(); initAmbientParticles();
+  const bgm = document.getElementById('bgm');
+  if (bgm) { bgm.volume = 0.4; if (!soundMuted) bgm.play().catch(()=>{}); }
+  syncWeaponBar(); 
+  if (window.VoidWorld) VoidWorld.generateInitialWorld(state);
+  if (window.VoidDirector) VoidDirector.startNextWave(state, {spawnEnemy, showWaveAnnounce, spawnChest});
+  initAmbientParticles();
 }
 
 function gameOver() {
@@ -1248,7 +1264,14 @@ function syncWeaponBar() {
     const icon = isEvolved ? wep.def.evolvedIcon : wep.def.icon;
     const slot = document.createElement('div'); slot.className = 'weapon-slot';
     if (isEvolved) slot.classList.add('evolved');
-    slot.innerHTML = `${icon}<span class="wep-level">${isEvolved ? 'MAX' : wep.level + 1}</span>`;
+    
+    if (wep.awakenedClass) {
+      slot.style.borderColor = wep.awakenedColor;
+      slot.style.boxShadow = `0 0 10px ${wep.awakenedColor}`;
+      slot.innerHTML = `<span style="color:${wep.awakenedColor}; font-size:24px; text-shadow:0 0 10px ${wep.awakenedColor}">${icon}</span><span class="wep-level" style="background:${wep.awakenedColor};color:#000;">AWK</span>`;
+    } else {
+      slot.innerHTML = `${icon}<span class="wep-level">${isEvolved ? 'MAX' : wep.level + 1}</span>`;
+    }
     slot.dataset.dps = Math.round((state.dpsStats[wep.defId] || 0) / Math.max(1, state.runTime));
     weaponBarEl.appendChild(slot);
   }
@@ -1396,7 +1419,8 @@ function drawOrbitShards() {
     const a = state.time*s.speed+(TWO_PI/s.count)*i;
     const sp = worldToScreen(state.px+Math.cos(a)*s.radius, state.py+Math.sin(a)*s.radius);
     ctx.save(); ctx.translate(sp.x, sp.y); ctx.rotate(a*2);
-    ctx.fillStyle = C.violet; ctx.shadowColor = C.violet; ctx.shadowBlur = 10;
+    const color = wep.awakenedColor || C.violet;
+    ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 10;
     ctx.beginPath(); ctx.moveTo(0,-s.size); ctx.lineTo(s.size*0.6,0); ctx.lineTo(0,s.size); ctx.lineTo(-s.size*0.6,0); ctx.closePath(); ctx.fill();
     ctx.shadowBlur = 0; ctx.restore();
   }
@@ -1409,7 +1433,8 @@ function drawShadowClones() {
     const a = state.time*1.5+(TWO_PI/s.count)*i;
     const sp = worldToScreen(state.px+Math.cos(a)*s.orbitR, state.py+Math.sin(a)*s.orbitR);
     ctx.save(); ctx.translate(sp.x, sp.y); ctx.rotate(a+Math.PI/2);
-    ctx.fillStyle = rgba(C.ice, 0.6); ctx.shadowColor = C.ice; ctx.shadowBlur = 8;
+    const color = wep.awakenedColor || rgba(C.ice, 0.6);
+    ctx.fillStyle = color; ctx.shadowColor = wep.awakenedColor || C.ice; ctx.shadowBlur = 8;
     const r = 8;
     ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r*0.6,r*0.3); ctx.lineTo(0,r*0.7); ctx.lineTo(-r*0.6,r*0.3); ctx.closePath(); ctx.fill();
     ctx.shadowBlur = 0; ctx.restore();
@@ -1544,7 +1569,8 @@ function update(dt) {
   updatePlayer(dt); updateCamera(dt); updateWeapons(dt); updateOrbitShards(dt); updateShadowClones(dt);
   updateProjectiles(dt); updateEnemies(dt); updateGems(dt); updateEffects(dt); updateParticles(dt);
   updateChests(dt); updateHazardZones(dt);
-  updateWaves(dt); updateCombo(dt); syncHUD();
+  if (window.VoidDirector) VoidDirector.update(state, dt, { spawnEnemy, showWaveAnnounce, spawnChest });
+  updateCombo(dt); syncHUD();
   // v2.0: Update new systems
   if (window.VoidEvents) VoidEvents.update(state, dt);
   if (window.VoidWorld) VoidWorld.update(state, dt);
@@ -1571,7 +1597,12 @@ function frame(time) {
 startBtn.addEventListener('click', startGame);
 retryBtn.addEventListener('click', startGame);
 menuBtn.addEventListener('click', showMenu);
-muteBtn.addEventListener('click', () => { soundMuted = !soundMuted; muteBtn.textContent = soundMuted ? '🔇' : '🔊'; });
+muteBtn.addEventListener('click', () => { 
+  soundMuted = !soundMuted; 
+  muteBtn.textContent = soundMuted ? '🔇' : '🔊'; 
+  const bgm = document.getElementById('bgm');
+  if (bgm) { if (soundMuted) bgm.pause(); else if (state && state.mode !== 'menu') bgm.play().catch(()=>{}); }
+});
 
 // v2.0: Lore modal click-to-advance
 const loreModal = document.getElementById('lore-modal');

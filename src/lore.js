@@ -8,6 +8,18 @@
   // ─── Lore Trigger Definitions ───
   const LORE_TRIGGERS = [
     {
+      wave: 1,
+      id: 'the_awakening',
+      type: 'cinematic',
+      dialogue: [
+        { speaker: 'VOID', text: 'Awake.', pause: 1000 },
+        { speaker: 'VOID', text: 'We have pulled you from the abyss.', pause: 1500 },
+        { speaker: 'VOID', text: 'The corruption spreads. You must grow stronger.', pause: 1500 },
+        { speaker: 'VOID', text: 'Survive. Slay. Evolve.', pause: 1200 },
+      ],
+      visualEffect: 'void_eye',
+    },
+    {
       wave: 5,
       id: 'the_void_speaks',
       type: 'cinematic',
@@ -31,6 +43,7 @@
         { speaker: 'VOID', text: 'But your name... it is gone.', pause: 1500 },
       ],
       visualEffect: 'void_eye',
+      afterEvent: 'awakening',
     },
     {
       wave: 15,
@@ -45,6 +58,7 @@
         { speaker: 'FORGOTTEN', text: 'You are not surviving.', pause: 1000 },
         { speaker: 'FORGOTTEN', text: 'You are remembering.', pause: 1500 },
       ],
+      visualEffect: 'purple_flash',
       afterEvent: 'buff_choice',
       buffChoices: [
         { name: 'Strength of the Ancients', icon: '⚔️', effect: { dmgMult: 0.25 } },
@@ -66,6 +80,7 @@
         { speaker: 'FORGOTTEN', text: 'That... is you.', pause: 2000 },
       ],
       visualEffect: 'purple_flash',
+      afterEvent: 'awakening',
     },
     {
       wave: 30,
@@ -78,6 +93,7 @@
         { speaker: 'VOID', text: 'And then... you will have to choose.', pause: 2000 },
       ],
       visualEffect: 'void_eye',
+      afterEvent: 'awakening',
     },
   ];
 
@@ -215,6 +231,11 @@
       if (window.VoidClasses && !state.chosenClass) {
         window.VoidClasses.showSelection(state);
         return; // Don't resume playing yet
+      }
+    } else if (trigger.afterEvent === 'awakening') {
+      if (window.VoidAwakenings) {
+        window.VoidAwakenings.showModal(state);
+        return;
       }
     } else if (trigger.afterEvent === 'buff_choice' && trigger.buffChoices) {
       _showBuffChoice(state, trigger.buffChoices);
