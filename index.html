@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Void Ascent — Roguelite Wave Survival</title>
+    <meta name="description" content="Survive infinite waves of spectral enemies. Collect weapons, level up with random upgrades, and ascend through the void." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="game-shell">
+      <canvas id="game" aria-label="Void Ascent game canvas"></canvas>
+
+      <!-- HUD Overlay -->
+      <section id="hud" aria-live="polite">
+        <div class="hud-left">
+          <div class="bar-wrap hp-bar-wrap">
+            <div class="bar-fill hp-fill" id="hp-bar"></div>
+            <span class="bar-label" id="hp-text">100 / 100</span>
+          </div>
+          <div class="bar-wrap xp-bar-wrap">
+            <div class="bar-fill xp-fill" id="xp-bar"></div>
+            <span class="bar-label" id="xp-text">Lv 1</span>
+          </div>
+        </div>
+        <div class="hud-center">
+          <div class="wave-badge" id="wave-display">WAVE 1</div>
+          <div class="wave-timer" id="wave-timer">0:20</div>
+        </div>
+        <div class="hud-right">
+          <div class="stat-pill" id="kill-pill"><span class="pill-icon">☠</span><span id="kills">0</span></div>
+          <div class="stat-pill stardust-pill" id="dust-pill"><span class="pill-icon">✦</span><span id="run-dust">0</span></div>
+        </div>
+      </section>
+
+      <!-- Weapon Bar -->
+      <div id="weapon-bar" aria-label="Active weapons"></div>
+
+      <!-- Level-Up Modal -->
+      <section id="levelup-modal" class="overlay hidden" aria-modal="true">
+        <div class="overlay-dim"></div>
+        <div class="overlay-panel levelup-panel">
+          <div class="levelup-flash"></div>
+          <h2 class="overlay-title">LEVEL UP</h2>
+          <p class="overlay-sub">Choose an upgrade</p>
+          <div id="upgrade-cards" class="card-row"></div>
+        </div>
+      </section>
+
+      <!-- Game Over -->
+      <section id="gameover-modal" class="overlay hidden" aria-modal="true">
+        <div class="overlay-dim"></div>
+        <div class="overlay-panel gameover-panel">
+          <h2 class="overlay-title go-title">VOID CONSUMED</h2>
+          <div class="go-stats" id="go-stats">
+            <div class="go-stat"><span>Wave</span><strong id="go-wave">0</strong></div>
+            <div class="go-stat"><span>Kills</span><strong id="go-kills">0</strong></div>
+            <div class="go-stat"><span>Level</span><strong id="go-level">0</strong></div>
+            <div class="go-stat accent"><span>Stardust</span><strong id="go-dust">+0</strong></div>
+          </div>
+          <div class="go-actions">
+            <button id="retry-btn" type="button" class="btn-primary">Ascend Again</button>
+            <button id="menu-btn" type="button" class="btn-ghost">Main Menu</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Menu -->
+      <section id="menu" aria-label="Main menu">
+        <div class="menu-inner">
+          <div class="menu-brand">
+            <div class="brand-diamond" aria-hidden="true"></div>
+            <span class="brand-tag">ROGUELITE WAVE SURVIVAL</span>
+          </div>
+          <h1 id="game-title">Void Ascent</h1>
+          <p class="menu-desc">Survive infinite waves of spectral enemies. Auto-attack with devastating weapons. Level up with random upgrades. How far can you ascend?</p>
+          <div class="menu-actions">
+            <button id="start-btn" type="button" class="btn-primary btn-lg">Begin Ascent</button>
+          </div>
+          <div class="shop-panel" id="shop-panel">
+            <div class="shop-head">
+              <span class="shop-label">PERMANENT UPGRADES</span>
+              <span class="shop-dust">✦ <strong id="shop-dust">0</strong></span>
+            </div>
+            <div class="shop-grid" id="shop-grid"></div>
+          </div>
+          <div class="menu-records">
+            <div class="rec"><span>Best Wave</span><strong id="best-wave">0</strong></div>
+            <div class="rec"><span>Total Kills</span><strong id="total-kills">0</strong></div>
+            <div class="rec"><span>Runs</span><strong id="total-runs">0</strong></div>
+          </div>
+          <div class="controls-hint">WASD / Arrows move · Auto-attack · P pause · F fullscreen</div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./src/main.js"></script>
+  </body>
+</html>
