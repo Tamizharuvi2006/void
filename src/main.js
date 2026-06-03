@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   VOID ASCENT v1.1 — Enhanced Roguelite Wave-Survival Engine
+   VOID ASCENT v2.0 — The Awakening: Mystery-Driven Roguelite
    ═══════════════════════════════════════════════════════════════ */
 
 // ─── DOM References ───
@@ -292,6 +292,13 @@ function newState() {
     chests: [], hazardZones: [],
     eliteModifiers: ['swift','armored','splitting','teleporter','berserker'],
     runAchievements: new Set(),
+    // v2.0: Merge new system states
+    ...( window.VoidEvents ? VoidEvents.getDefaultState() : {} ),
+    ...( window.VoidLore ? VoidLore.getDefaultState() : {} ),
+    ...( window.VoidClasses ? VoidClasses.getDefaultState() : {} ),
+    ...( window.VoidWorld ? VoidWorld.getDefaultState() : {} ),
+    watchtowerReveal: 0,
+    dashCdBase: 3.0,
   };
 }
 
@@ -554,7 +561,13 @@ function findNearest(x, y, list, maxDist = Infinity) {
 function dealDamage(enemy, dmg, sourceId = null) {
   const isCrit = Math.random() < state.critChance;
   const finalDmg = isCrit ? Math.round(dmg * 1.8) : dmg;
-  enemy.hp -= finalDmg; enemy.hitFlash = 0.1;
+
+  // v2.0: Event targets
+  if (enemy.isChampion) {
+    if (window.VoidEvents) VoidEvents.damageChampion(state, finalDmg);
+  } else {
+    enemy.hp -= finalDmg; enemy.hitFlash = 0.1;
+  }
   
   // DPS Tracking
   if (sourceId) {
@@ -573,7 +586,7 @@ function dealDamage(enemy, dmg, sourceId = null) {
   }
 
   state.ultCharge = Math.min(ULT_MAX, state.ultCharge + finalDmg * 0.04);
-  if (enemy.hp <= 0) killEnemy(enemy);
+  if (!enemy.isChampion && enemy.hp <= 0) killEnemy(enemy);
 }
 
 function killEnemy(enemy) {
@@ -748,9 +761,20 @@ function updateEnemies(dt) {
 // WAVE SYSTEM
 // ═══════════════════════════════════════════
 function startNextWave() {
-  state.wave++; state.waveTimer = WAVE_DURATION;
-  state.waveEnemiesQueue = getWaveEnemies(state.wave); state.spawnTimer = 0;
+  state.wave++;
+  state.waveEnemiesQueue = getWaveEnemies(state.wave);
+  state.waveTimer = WAVE_DURATION + state.wave * 0.5;
+  state.spawnTimer = 0;
   showWaveAnnounce(state.wave);
+  // v2.0: Check lore triggers
+  if (window.VoidLore) {
+    const trigger = VoidLore.checkTriggers(state);
+    if (trigger) {
+      setTimeout(() => VoidLore.startLore(state, trigger), 1500);
+    }
+  }
+  // v2.0: Spawn world objects
+  if (window.VoidWorld) VoidWorld.spawnForWave(state, state.wave);
   checkAchievements();
 }
 
@@ -1126,7 +1150,7 @@ function updatePlayer(dt) {
     if (state.trail.length > TRAIL_LENGTH) state.trail.shift();
     return; // Skip normal movement
   } else if (input['shift'] && state.dashCd <= 0 && (mx !== 0 || my !== 0)) {
-    state.dashCd = 3.0;
+    state.dashCd = state.dashCdBase;
     state.dashTime = 0.2;
     state.dashDir = { x: mx, y: my };
     state.invuln = 0.25; // iframe
@@ -1193,7 +1217,7 @@ function syncHUD() {
   if (state.ultCharge >= ULT_MAX) { ultBar.classList.add('ready'); ultText.textContent = 'SPACE — ULTIMATE'; }
   else { ultBar.classList.remove('ready'); ultText.textContent = 'ULTIMATE'; }
   
-  const dashPct = Math.max(0, 1 - (state.dashCd / 3.0));
+  const dashPct = Math.max(0, 1 - (state.dashCd / state.dashCdBase));
   dashBar.style.width = `${dashPct * 100}%`;
   dashBar.classList.toggle('ready', dashPct === 1);
   
@@ -1288,16 +1312,18 @@ function drawPlayerTrail() {
 
 function drawPlayer() {
   const p = worldToScreen(state.px, state.py), r = PLAYER_RADIUS;
+  const color = window.VoidClasses ? VoidClasses.getPlayerColor(state) : C.player;
+  const glow = window.VoidClasses ? VoidClasses.getPlayerGlow(state) : rgba(C.player, 0.25);
   const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
-  grd.addColorStop(0, state.dmgFlash > 0 ? rgba(C.playerHit, 0.4) : rgba(C.player, 0.25));
+  grd.addColorStop(0, state.dmgFlash > 0 ? rgba(C.playerHit, 0.4) : glow);
   grd.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(p.x, p.y, r * 3, 0, TWO_PI); ctx.fill();
   ctx.save(); ctx.translate(p.x, p.y);
   const moveAngle = (state.pvx !== 0 || state.pvy !== 0) ? Math.atan2(state.pvy, state.pvx) : -Math.PI / 2;
   ctx.rotate(moveAngle + Math.PI / 2);
   if (state.invuln > 0 && Math.sin(state.time * 30) > 0) ctx.globalAlpha = 0.4;
-  ctx.fillStyle = state.dmgFlash > 0 ? C.playerHit : C.player;
-  ctx.shadowColor = state.dmgFlash > 0 ? C.playerHit : C.player; ctx.shadowBlur = 16;
+  ctx.fillStyle = state.dmgFlash > 0 ? C.playerHit : color;
+  ctx.shadowColor = state.dmgFlash > 0 ? C.playerHit : color; ctx.shadowBlur = 16;
   ctx.beginPath(); ctx.moveTo(0,-r*1.3); ctx.lineTo(r*0.8,r*0.3); ctx.lineTo(0,r); ctx.lineTo(-r*0.8,r*0.3); ctx.closePath(); ctx.fill();
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.beginPath(); ctx.moveTo(0,-r*0.5); ctx.lineTo(r*0.25,r*0.1); ctx.lineTo(0,r*0.5); ctx.lineTo(-r*0.25,r*0.1); ctx.closePath(); ctx.fill();
@@ -1473,11 +1499,16 @@ function drawMinimap() {
     }
   }
   // Player
-  const px = (state.px + ARENA_HALF) * scale, py = (state.py + ARENA_HALF) * scale;
-  minimapCtx.fillStyle = C.cyan;
-  minimapCtx.beginPath(); minimapCtx.arc(px, py, 3, 0, TWO_PI); minimapCtx.fill();
+  minimapCtx.fillStyle = window.VoidClasses ? VoidClasses.getPlayerColor(state) : C.cyan;
+  minimapCtx.beginPath(); minimapCtx.arc((state.px + ARENA_HALF) * scale, (state.py + ARENA_HALF) * scale, 3, 0, TWO_PI); minimapCtx.fill();
+
+  // v2.0 systems
+  if (window.VoidWorld) VoidWorld.renderMinimap(minimapCtx, state, scale, mw, mh);
+  if (window.VoidEvents) VoidEvents.renderMinimap(minimapCtx, state, scale, mw, mh);
+
   // Camera viewport box
   const vw = canvas.width * scale, vh = canvas.height * scale;
+  const px = (state.px + ARENA_HALF) * scale, py = (state.py + ARENA_HALF) * scale;
   minimapCtx.strokeStyle = rgba(C.cyan, 0.25); minimapCtx.lineWidth = 1;
   minimapCtx.strokeRect(px - vw/2, py - vh/2, vw, vh);
 }
@@ -1493,8 +1524,12 @@ function drawPausedOverlay() {
 function render() {
   if (!state) return;
   drawBackground(); drawGrid(); drawArenaBorder();
+  // v2.0: Draw world objects (below entities)
+  if (window.VoidWorld) VoidWorld.render(ctx, state, worldToScreen);
   drawGems(); drawEffects(); drawOrbitShards(); drawShadowClones();
   drawProjectiles(); drawPlayerTrail(); drawEnemies(); drawPlayer();
+  // v2.0: Draw event visuals (above entities)
+  if (window.VoidEvents) VoidEvents.render(ctx, state, worldToScreen);
   drawParticles(); drawDamageNums();
   if (state.mode === 'paused') drawPausedOverlay();
   if (state.mode !== 'menu') drawMinimap();
@@ -1510,6 +1545,10 @@ function update(dt) {
   updateProjectiles(dt); updateEnemies(dt); updateGems(dt); updateEffects(dt); updateParticles(dt);
   updateChests(dt); updateHazardZones(dt);
   updateWaves(dt); updateCombo(dt); syncHUD();
+  // v2.0: Update new systems
+  if (window.VoidEvents) VoidEvents.update(state, dt);
+  if (window.VoidWorld) VoidWorld.update(state, dt);
+  if (state.watchtowerReveal > 0) state.watchtowerReveal -= dt;
   // Update ambient particles
   for (const ap of ambientParticles) { ap.x += ap.vx * dt; ap.y += ap.vy * dt; if (ap.x < -ARENA_HALF) ap.x = ARENA_HALF; if (ap.x > ARENA_HALF) ap.x = -ARENA_HALF; if (ap.y < -ARENA_HALF) ap.y = ARENA_HALF; if (ap.y > ARENA_HALF) ap.y = -ARENA_HALF; }
 }
@@ -1518,7 +1557,8 @@ function frame(time) {
   const dt = Math.min(0.05, (time - lastTime) / 1000 || 1/60); lastTime = time; resize();
   if (state) {
     if (state.mode === 'playing' || state.mode === 'paused') { update(dt); render(); }
-    else if (state.mode === 'levelup') { updateCamera(dt); render(); }
+    else if (state.mode === 'levelup' || state.mode === 'class_select' || state.mode === 'npc_choice') { updateCamera(dt); render(); }
+    else if (state.mode === 'lore' || state.mode === 'lore_choice') { updateCamera(dt); render(); if (window.VoidLore) VoidLore.update(state, dt); }
     else if (state.mode === 'gameover') { updateCamera(dt); updateParticles(dt); render(); }
     else if (state.mode === 'menu') { state.time += dt; render(); }
   }
@@ -1532,5 +1572,14 @@ startBtn.addEventListener('click', startGame);
 retryBtn.addEventListener('click', startGame);
 menuBtn.addEventListener('click', showMenu);
 muteBtn.addEventListener('click', () => { soundMuted = !soundMuted; muteBtn.textContent = soundMuted ? '🔇' : '🔊'; });
+
+// v2.0: Lore modal click-to-advance
+const loreModal = document.getElementById('lore-modal');
+if (loreModal) {
+  loreModal.addEventListener('click', (e) => {
+    if (e.target.closest('.lore-choice-btn')) return; // Don't advance on choice clicks
+    if (state && (state.mode === 'lore') && window.VoidLore) VoidLore.advance(state);
+  });
+}
 
 state = newState(); resize(); showMenu(); initAmbientParticles(); requestAnimationFrame(frame);

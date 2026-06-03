@@ -39,6 +39,7 @@
             <div class="bar-fill dash-fill" id="dash-bar"></div>
             <span class="bar-label" id="dash-text">DASH (SHIFT)</span>
           </div>
+          <div class="class-badge hidden" id="class-badge"></div>
         </div>
         <div class="hud-center">
           <div class="wave-badge" id="wave-display">WAVE 1</div>
@@ -69,6 +70,18 @@
       <!-- Achievement Toast Container -->
       <div id="achievement-container" class="achievement-container"></div>
 
+      <!-- Event HUD -->
+      <div id="event-hud" class="event-hud hidden">
+        <div class="event-hud-header">
+          <span id="event-icon" class="event-hud-icon"></span>
+          <span id="event-name" class="event-hud-name"></span>
+        </div>
+        <p id="event-desc" class="event-hud-desc"></p>
+        <div class="event-timer-wrap">
+          <div class="event-timer-bar" id="event-timer-bar"></div>
+        </div>
+      </div>
+
       <!-- Mobile Joystick -->
       <div id="joystick-zone" class="joystick-zone" aria-label="Movement joystick">
         <div class="joystick-base" id="joystick-base">
@@ -84,6 +97,27 @@
           <h2 class="overlay-title">LEVEL UP</h2>
           <p class="overlay-sub">Choose an upgrade</p>
           <div id="upgrade-cards" class="card-row"></div>
+        </div>
+      </section>
+
+      <!-- Lore / Dialogue Modal -->
+      <section id="lore-modal" class="overlay lore-overlay hidden" aria-modal="true">
+        <div class="overlay-dim lore-dim"></div>
+        <div class="lore-panel">
+          <div class="lore-speaker" id="lore-speaker"></div>
+          <div class="lore-text" id="lore-text"></div>
+          <div class="lore-continue hidden" id="lore-continue">▼ Click to continue</div>
+          <div class="lore-choices hidden" id="lore-choices"></div>
+        </div>
+      </section>
+
+      <!-- Class Selection Modal -->
+      <section id="class-modal" class="overlay hidden" aria-modal="true">
+        <div class="overlay-dim"></div>
+        <div class="overlay-panel class-panel">
+          <h2 class="overlay-title class-title">Choose Your Path</h2>
+          <p class="overlay-sub">Recover a memory of who you once were</p>
+          <div id="class-cards" class="class-cards"></div>
         </div>
       </section>
 
@@ -132,11 +166,15 @@
             <div class="rec"><span>Runs</span><strong id="total-runs">0</strong></div>
             <div class="rec"><span>Achievements</span><strong id="achievement-count">0</strong></div>
           </div>
-          <div class="controls-hint">WASD move · Auto-attack · SPACE ultimate · P pause · M mute · F fullscreen</div>
+          <div class="controls-hint">WASD move · SHIFT dash · SPACE ultimate · P pause · M mute · F fullscreen</div>
         </div>
       </section>
     </main>
 
+    <script src="./src/events.js"></script>
+    <script src="./src/lore.js"></script>
+    <script src="./src/classes.js"></script>
+    <script src="./src/world.js"></script>
     <script src="./src/main.js"></script>
   </body>
 </html>
