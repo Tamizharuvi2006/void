@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Void Ascent — Roguelite Wave Survival</title>
     <meta name="description" content="Survive infinite waves of spectral enemies. Collect weapons, level up with random upgrades, and ascend through the void." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,6 +13,12 @@
   <body>
     <main id="game-shell">
       <canvas id="game" aria-label="Void Ascent game canvas"></canvas>
+
+      <!-- Vignette overlay -->
+      <div id="vignette" class="vignette" aria-hidden="true"></div>
+
+      <!-- Screen flash overlay -->
+      <div id="screen-flash" class="screen-flash" aria-hidden="true"></div>
 
       <!-- HUD Overlay -->
       <section id="hud" aria-live="polite">
@@ -25,19 +31,45 @@
             <div class="bar-fill xp-fill" id="xp-bar"></div>
             <span class="bar-label" id="xp-text">Lv 1</span>
           </div>
+          <div class="bar-wrap ult-bar-wrap">
+            <div class="bar-fill ult-fill" id="ult-bar"></div>
+            <span class="bar-label" id="ult-text">ULTIMATE</span>
+          </div>
         </div>
         <div class="hud-center">
           <div class="wave-badge" id="wave-display">WAVE 1</div>
           <div class="wave-timer" id="wave-timer">0:20</div>
+          <div class="combo-display hidden" id="combo-display">
+            <span class="combo-count" id="combo-count">0</span>
+            <span class="combo-label">COMBO</span>
+            <span class="combo-mult" id="combo-mult">×1.0</span>
+          </div>
         </div>
         <div class="hud-right">
           <div class="stat-pill" id="kill-pill"><span class="pill-icon">☠</span><span id="kills">0</span></div>
           <div class="stat-pill stardust-pill" id="dust-pill"><span class="pill-icon">✦</span><span id="run-dust">0</span></div>
+          <button class="mute-btn" id="mute-btn" type="button" title="Toggle sound (M)">🔊</button>
         </div>
       </section>
 
       <!-- Weapon Bar -->
       <div id="weapon-bar" aria-label="Active weapons"></div>
+
+      <!-- Minimap -->
+      <canvas id="minimap" width="140" height="140" aria-label="Minimap"></canvas>
+
+      <!-- Wave Announce -->
+      <div id="wave-announce" class="wave-announce hidden" aria-live="assertive"></div>
+
+      <!-- Achievement Toast Container -->
+      <div id="achievement-container" class="achievement-container"></div>
+
+      <!-- Mobile Joystick -->
+      <div id="joystick-zone" class="joystick-zone" aria-label="Movement joystick">
+        <div class="joystick-base" id="joystick-base">
+          <div class="joystick-knob" id="joystick-knob"></div>
+        </div>
+      </div>
 
       <!-- Level-Up Modal -->
       <section id="levelup-modal" class="overlay hidden" aria-modal="true">
@@ -59,6 +91,7 @@
             <div class="go-stat"><span>Wave</span><strong id="go-wave">0</strong></div>
             <div class="go-stat"><span>Kills</span><strong id="go-kills">0</strong></div>
             <div class="go-stat"><span>Level</span><strong id="go-level">0</strong></div>
+            <div class="go-stat"><span>Best Combo</span><strong id="go-combo">0</strong></div>
             <div class="go-stat accent"><span>Stardust</span><strong id="go-dust">+0</strong></div>
           </div>
           <div class="go-actions">
@@ -91,8 +124,9 @@
             <div class="rec"><span>Best Wave</span><strong id="best-wave">0</strong></div>
             <div class="rec"><span>Total Kills</span><strong id="total-kills">0</strong></div>
             <div class="rec"><span>Runs</span><strong id="total-runs">0</strong></div>
+            <div class="rec"><span>Achievements</span><strong id="achievement-count">0</strong></div>
           </div>
-          <div class="controls-hint">WASD / Arrows move · Auto-attack · P pause · F fullscreen</div>
+          <div class="controls-hint">WASD move · Auto-attack · SPACE ultimate · P pause · M mute · F fullscreen</div>
         </div>
       </section>
     </main>
