@@ -19,6 +19,7 @@ const xpBar = document.getElementById('xp-bar');
 const xpText = document.getElementById('xp-text');
 const ultBar = document.getElementById('ult-bar');
 const ultText = document.getElementById('ult-text');
+const dashBar = document.getElementById('dash-bar');
 const waveDisplay = document.getElementById('wave-display');
 const waveTimerEl = document.getElementById('wave-timer');
 const killsEl = document.getElementById('kills');
@@ -292,6 +293,7 @@ function newState() {
     mode: 'menu', time: 0, runTime: 0,
     px: 0, py: 0, pvx: 0, pvy: 0, hp: baseHp, maxHp: baseHp,
     lastMoveAngle: -Math.PI / 2, // default facing up
+    dashCd: 0, dashTime: 0, dashDir: {x: 0, y: -1},
     xp: 0, xpToNext: XP_BASE, level: 1, invuln: 0, dmgFlash: 0,
     dmgMult: 1 + save.upgrades.damage * 0.05, speedMult: 1 + save.upgrades.speed * 0.04,
     xpMult: 1 + save.upgrades.xpGain * 0.08, magnetMult: 1 + save.upgrades.pickupRadius * 0.15,
@@ -1134,6 +1136,27 @@ function updatePlayer(dt) {
   // Track last move angle for weapon fallback direction (Bug 4 fix)
   if (mx !== 0 || my !== 0) state.lastMoveAngle = Math.atan2(my, mx);
   const speed = PLAYER_SPEED_BASE * state.speedMult;
+  
+  // Dash mechanics
+  if (state.dashCd > 0) state.dashCd = Math.max(0, state.dashCd - dt);
+  
+  if (state.dashTime > 0) {
+    state.dashTime -= dt;
+    state.px += state.dashDir.x * (speed * 3) * dt;
+    state.py += state.dashDir.y * (speed * 3) * dt;
+    state.px = clamp(state.px, -ARENA_HALF, ARENA_HALF); state.py = clamp(state.py, -ARENA_HALF, ARENA_HALF);
+    state.trail.push({ x: state.px, y: state.py, t: state.time });
+    if (state.trail.length > TRAIL_LENGTH) state.trail.shift();
+    return; // Skip normal movement
+  } else if (input['shift'] && state.dashCd <= 0 && (mx !== 0 || my !== 0)) {
+    state.dashCd = 3.0;
+    state.dashTime = 0.2;
+    state.dashDir = { x: mx, y: my };
+    state.invuln = 0.25; // iframe
+    playSound('pickup'); // temporary dash sound
+    return; // Skip rest for this frame
+  }
+  
   state.pvx = lerp(state.pvx, mx * speed, 1 - Math.pow(0.0001, dt));
   state.pvy = lerp(state.pvy, my * speed, 1 - Math.pow(0.0001, dt));
   state.px += state.pvx * dt; state.py += state.pvy * dt;
@@ -1192,6 +1215,11 @@ function syncHUD() {
   ultBar.style.width = clamp(state.ultCharge / ULT_MAX * 100, 0, 100) + '%';
   if (state.ultCharge >= ULT_MAX) { ultBar.classList.add('ready'); ultText.textContent = 'SPACE — ULTIMATE'; }
   else { ultBar.classList.remove('ready'); ultText.textContent = 'ULTIMATE'; }
+  
+  const dashPct = Math.max(0, 1 - (state.dashCd / 3.0));
+  dashBar.style.width = `${dashPct * 100}%`;
+  dashBar.classList.toggle('ready', dashPct === 1);
+  
   waveDisplay.textContent = `WAVE ${state.wave}`;
   const secs = Math.max(0, Math.ceil(state.waveTimer));
   waveTimerEl.textContent = `0:${secs < 10 ? '0' : ''}${secs}`;

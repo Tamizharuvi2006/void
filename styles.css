@@ -167,6 +167,17 @@ html, body {
   50% { box-shadow: 0 0 24px rgba(255, 200, 69, 0.8); }
 }
 
+.dash-bar-wrap { height: 14px; border-color: rgba(0, 240, 255, 0.25); margin-top: 6px; }
+.dash-fill {
+  background: linear-gradient(90deg, #00f0ff, #0088ff);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  transition: width 0.1s linear;
+}
+.dash-fill.ready {
+  box-shadow: 0 0 15px #00f0ff, 0 0 30px #00f0ff;
+}
+.dash-bar-wrap .bar-label { font-size: 10px; color: var(--cyan); }
+
 .bar-label {
   position: absolute;
   inset: 0;
