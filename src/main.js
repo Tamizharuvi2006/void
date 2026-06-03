@@ -42,7 +42,6 @@ const comboDisplayEl = document.getElementById('combo-display');
 const comboCountEl = document.getElementById('combo-count');
 const comboMultEl = document.getElementById('combo-mult');
 const waveAnnounceEl = document.getElementById('wave-announce');
-const streakAnnounceEl = document.getElementById('streak-announce');
 const achieveContainer = document.getElementById('achievement-container');
 const muteBtn = document.getElementById('mute-btn');
 const minimapCanvas = document.getElementById('minimap');
@@ -147,23 +146,6 @@ function playSound(type) {
         osc.start(t); osc.stop(t + 0.6); break;
     }
   } catch {}
-}
-
-function announceStreak(text, cssClass) {
-  streakAnnounceEl.textContent = text;
-  streakAnnounceEl.className = `streak-announce ${cssClass}`;
-  void streakAnnounceEl.offsetWidth; // trigger reflow
-  streakAnnounceEl.classList.remove('hidden');
-  
-  if (!soundMuted && 'speechSynthesis' in window) {
-    // Cancel any currently speaking TTS to favor the new streak
-    window.speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.pitch = 0.5; // Deep voice
-    msg.rate = 1.1;
-    msg.volume = 1.0;
-    window.speechSynthesis.speak(msg);
-  }
 }
 
 // ─── Save System ───
@@ -600,11 +582,6 @@ function killEnemy(enemy) {
   // Combo
   state.combo++; state.comboTimer = COMBO_DECAY;
   state.bestCombo = Math.max(state.bestCombo, state.combo);
-  
-  // Streak Effects
-  if (state.combo === 10) announceStreak("RAMPAGE", "");
-  else if (state.combo === 20) announceStreak("UNSTOPPABLE", "");
-  else if (state.combo === 50) announceStreak("VOID GOD", "void-god");
   // XP gems
   const gemCount = enemy.def.isBoss ? 12 : (enemy.def.xp >= 6 ? 3 : (enemy.def.xp >= 3 ? 2 : 1));
   const xpPer = Math.ceil(enemy.def.xp / gemCount);
