@@ -341,6 +341,43 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════
+   RUN TIMER
+   ═══════════════════════════════════════════ */
+.run-timer {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+/* Weapon slot tooltip for DPS */
+.weapon-slot { position: relative; }
+.weapon-slot[data-dps]::after {
+  content: "DPS: " attr(data-dps);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glow);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+.weapon-slot:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ═══════════════════════════════════════════
    MINIMAP
    ═══════════════════════════════════════════ */
 #minimap {

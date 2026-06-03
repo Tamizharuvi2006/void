@@ -198,31 +198,30 @@ const ACHIEVEMENT_DEFS = [
 
 // ─── Weapon Definitions (12 total) ───
 const WEAPON_DEFS = [
-  { id: 'void_bolt', name: 'Void Bolt', icon: '🔮', maxLv: 5, desc: 'Fires a bolt at the nearest enemy',
-    stats: [{ dmg:12,cd:0.85,count:1,speed:420,size:5 },{ dmg:18,cd:0.75,count:1,speed:450,size:5 },{ dmg:22,cd:0.65,count:2,speed:480,size:6 },{ dmg:30,cd:0.55,count:2,speed:500,size:6 },{ dmg:42,cd:0.45,count:3,speed:540,size:7 }] },
-  { id: 'orbit_shards', name: 'Orbit Shards', icon: '💠', maxLv: 5, desc: 'Crystals orbit around you',
-    stats: [{ dmg:8,count:2,radius:60,speed:2.2,size:7 },{ dmg:12,count:3,radius:70,speed:2.4,size:8 },{ dmg:16,count:3,radius:80,speed:2.6,size:9 },{ dmg:22,count:4,radius:90,speed:2.8,size:10 },{ dmg:30,count:5,radius:100,speed:3.0,size:11 }] },
-  { id: 'nova_pulse', name: 'Nova Pulse', icon: '💥', maxLv: 5, desc: 'Periodic explosion around you',
-    stats: [{ dmg:15,cd:3.2,radius:90 },{ dmg:22,cd:2.8,radius:110 },{ dmg:32,cd:2.4,radius:130 },{ dmg:44,cd:2.0,radius:155 },{ dmg:60,cd:1.6,radius:180 }] },
-  { id: 'frost_ring', name: 'Frost Ring', icon: '❄️', maxLv: 5, desc: 'Expanding ring that slows enemies',
-    stats: [{ dmg:6,cd:4.0,maxR:160,slow:0.4,dur:2 },{ dmg:10,cd:3.5,maxR:190,slow:0.45,dur:2.5 },{ dmg:14,cd:3.0,maxR:220,slow:0.5,dur:3 },{ dmg:20,cd:2.5,maxR:260,slow:0.55,dur:3.5 },{ dmg:28,cd:2.0,maxR:300,slow:0.6,dur:4 }] },
-  { id: 'lightning_chain', name: 'Lightning Chain', icon: '⚡', maxLv: 5, desc: 'Bolt bouncing between enemies',
-    stats: [{ dmg:14,cd:1.8,bounces:2,range:120 },{ dmg:20,cd:1.6,bounces:3,range:140 },{ dmg:28,cd:1.4,bounces:3,range:160 },{ dmg:38,cd:1.2,bounces:4,range:180 },{ dmg:52,cd:1.0,bounces:5,range:200 }] },
-  { id: 'phantom_mines', name: 'Phantom Mines', icon: '💣', maxLv: 5, desc: 'Drops exploding mines behind you',
-    stats: [{ dmg:20,cd:2.5,blastR:55,count:1 },{ dmg:30,cd:2.2,blastR:65,count:1 },{ dmg:40,cd:2.0,blastR:75,count:2 },{ dmg:55,cd:1.7,blastR:85,count:2 },{ dmg:75,cd:1.4,blastR:100,count:3 }] },
-  { id: 'death_blossom', name: 'Death Blossom', icon: '🌀', maxLv: 5, desc: 'Spinning blades in all directions',
-    stats: [{ dmg:8,cd:1.6,count:4,speed:280,size:6 },{ dmg:12,cd:1.4,count:5,speed:300,size:6 },{ dmg:16,cd:1.2,count:6,speed:320,size:7 },{ dmg:22,cd:1.0,count:8,speed:350,size:7 },{ dmg:30,cd:0.8,count:10,speed:380,size:8 }] },
-  { id: 'gravity_well', name: 'Gravity Well', icon: '🕳️', maxLv: 5, desc: 'Vortex that pulls and damages enemies',
-    stats: [{ dmg:4,cd:6,radius:80,pull:60,dur:3 },{ dmg:6,cd:5.5,radius:95,pull:75,dur:3.5 },{ dmg:9,cd:5,radius:110,pull:90,dur:4 },{ dmg:13,cd:4.5,radius:130,pull:110,dur:4.5 },{ dmg:18,cd:4,radius:150,pull:130,dur:5 }] },
-  // ─── NEW WEAPONS ───
-  { id: 'plasma_beam', name: 'Plasma Beam', icon: '🔥', maxLv: 5, desc: 'Piercing laser through enemies',
-    stats: [{ dmg:18,cd:2.0,length:300,width:6 },{ dmg:26,cd:1.8,length:350,width:7 },{ dmg:36,cd:1.5,length:400,width:8 },{ dmg:48,cd:1.3,length:450,width:9 },{ dmg:65,cd:1.0,length:500,width:11 }] },
-  { id: 'meteor_strike', name: 'Meteor Strike', icon: '☄️', maxLv: 5, desc: 'Devastating AoE from the sky',
-    stats: [{ dmg:40,cd:5,radius:70,delay:1 },{ dmg:60,cd:4.5,radius:85,delay:0.9 },{ dmg:85,cd:4,radius:100,delay:0.8 },{ dmg:115,cd:3.5,radius:115,delay:0.7 },{ dmg:160,cd:3,radius:135,delay:0.6 }] },
-  { id: 'spectral_whip', name: 'Spectral Whip', icon: '🗡️', maxLv: 5, desc: 'Sweeping arc in move direction',
-    stats: [{ dmg:14,cd:1.2,arc:1.2,range:80 },{ dmg:20,cd:1.1,arc:1.4,range:90 },{ dmg:28,cd:1.0,arc:1.6,range:100 },{ dmg:38,cd:0.9,arc:1.8,range:115 },{ dmg:52,cd:0.8,arc:2.0,range:130 }] },
-  { id: 'shadow_clones', name: 'Shadow Clones', icon: '👤', maxLv: 5, desc: 'Clones that orbit and shoot',
-    stats: [{ count:1,dmg:8,fireRate:1.2,orbitR:80 },{ count:1,dmg:12,fireRate:1.0,orbitR:90 },{ count:2,dmg:14,fireRate:0.9,orbitR:95 },{ count:2,dmg:18,fireRate:0.8,orbitR:100 },{ count:3,dmg:24,fireRate:0.7,orbitR:110 }] },
+  { id: 'void_bolt', name: 'Void Bolt', icon: '🔮', maxLv: 6, desc: 'Fires a bolt at the nearest enemy',
+    stats: [{ dmg:12,cd:0.85,count:1,speed:420,size:5 },{ dmg:18,cd:0.75,count:1,speed:450,size:5 },{ dmg:22,cd:0.65,count:2,speed:480,size:6 },{ dmg:30,cd:0.55,count:2,speed:500,size:6 },{ dmg:42,cd:0.45,count:3,speed:540,size:7 },{ dmg:60,cd:0.35,count:4,speed:600,size:8,evolved:true }], evolvedName:'Void Barrage', evolvedIcon:'🌠' },
+  { id: 'orbit_shards', name: 'Orbit Shards', icon: '💠', maxLv: 6, desc: 'Crystals orbit around you',
+    stats: [{ dmg:8,count:2,radius:60,speed:2.2,size:7 },{ dmg:12,count:3,radius:70,speed:2.4,size:8 },{ dmg:16,count:3,radius:80,speed:2.6,size:9 },{ dmg:22,count:4,radius:90,speed:2.8,size:10 },{ dmg:30,count:5,radius:100,speed:3.0,size:11 },{ dmg:45,count:6,radius:120,speed:3.5,size:13,evolved:true }], evolvedName:'Aegis Crystals', evolvedIcon:'🌟' },
+  { id: 'nova_pulse', name: 'Nova Pulse', icon: '💥', maxLv: 6, desc: 'Periodic explosion around you',
+    stats: [{ dmg:15,cd:3.2,radius:90 },{ dmg:22,cd:2.8,radius:110 },{ dmg:32,cd:2.4,radius:130 },{ dmg:44,cd:2.0,radius:155 },{ dmg:60,cd:1.6,radius:180 },{ dmg:85,cd:1.2,radius:220,evolved:true }], evolvedName:'Supernova', evolvedIcon:'🎇' },
+  { id: 'frost_ring', name: 'Frost Ring', icon: '❄️', maxLv: 6, desc: 'Expanding ring that slows enemies',
+    stats: [{ dmg:6,cd:4.0,maxR:160,slow:0.4,dur:2 },{ dmg:10,cd:3.5,maxR:190,slow:0.45,dur:2.5 },{ dmg:14,cd:3.0,maxR:220,slow:0.5,dur:3 },{ dmg:20,cd:2.5,maxR:260,slow:0.55,dur:3.5 },{ dmg:28,cd:2.0,maxR:300,slow:0.6,dur:4 },{ dmg:40,cd:1.5,maxR:400,slow:0.75,dur:5,evolved:true }], evolvedName:'Blizzard Aura', evolvedIcon:'🌨️' },
+  { id: 'lightning_chain', name: 'Lightning Chain', icon: '⚡', maxLv: 6, desc: 'Bolt bouncing between enemies',
+    stats: [{ dmg:14,cd:1.8,bounces:2,range:120 },{ dmg:20,cd:1.6,bounces:3,range:140 },{ dmg:28,cd:1.4,bounces:3,range:160 },{ dmg:38,cd:1.2,bounces:4,range:180 },{ dmg:52,cd:1.0,bounces:5,range:200 },{ dmg:70,cd:0.8,bounces:7,range:250,evolved:true }], evolvedName:'Stormcaller', evolvedIcon:'🌩️' },
+  { id: 'phantom_mines', name: 'Phantom Mines', icon: '💣', maxLv: 6, desc: 'Drops exploding mines behind you',
+    stats: [{ dmg:20,cd:2.5,blastR:55,count:1 },{ dmg:30,cd:2.2,blastR:65,count:1 },{ dmg:40,cd:2.0,blastR:75,count:2 },{ dmg:55,cd:1.7,blastR:85,count:2 },{ dmg:75,cd:1.4,blastR:100,count:3 },{ dmg:100,cd:1.0,blastR:120,count:4,evolved:true }], evolvedName:'Void Charges', evolvedIcon:'🎆' },
+  { id: 'death_blossom', name: 'Death Blossom', icon: '🌀', maxLv: 6, desc: 'Spinning blades in all directions',
+    stats: [{ dmg:8,cd:1.6,count:4,speed:280,size:6 },{ dmg:12,cd:1.4,count:5,speed:300,size:6 },{ dmg:16,cd:1.2,count:6,speed:320,size:7 },{ dmg:22,cd:1.0,count:8,speed:350,size:7 },{ dmg:30,cd:0.8,count:10,speed:380,size:8 },{ dmg:45,cd:0.6,count:14,speed:420,size:10,evolved:true }], evolvedName:'Razor Storm', evolvedIcon:'🌪️' },
+  { id: 'gravity_well', name: 'Gravity Well', icon: '🕳️', maxLv: 6, desc: 'Vortex that pulls and damages enemies',
+    stats: [{ dmg:4,cd:6,radius:80,pull:60,dur:3 },{ dmg:6,cd:5.5,radius:95,pull:75,dur:3.5 },{ dmg:9,cd:5,radius:110,pull:90,dur:4 },{ dmg:13,cd:4.5,radius:130,pull:110,dur:4.5 },{ dmg:18,cd:4,radius:150,pull:130,dur:5 },{ dmg:28,cd:3.5,radius:200,pull:180,dur:6,evolved:true }], evolvedName:'Singularity', evolvedIcon:'🌌' },
+  { id: 'plasma_beam', name: 'Plasma Beam', icon: '🔥', maxLv: 6, desc: 'Piercing laser through enemies',
+    stats: [{ dmg:18,cd:2.0,length:300,width:6 },{ dmg:26,cd:1.8,length:350,width:7 },{ dmg:36,cd:1.5,length:400,width:8 },{ dmg:48,cd:1.3,length:450,width:9 },{ dmg:65,cd:1.0,length:500,width:11 },{ dmg:90,cd:0.8,length:600,width:15,evolved:true }], evolvedName:'Death Ray', evolvedIcon:'🌋' },
+  { id: 'meteor_strike', name: 'Meteor Strike', icon: '☄️', maxLv: 6, desc: 'Devastating AoE from the sky',
+    stats: [{ dmg:40,cd:5,radius:70,delay:1 },{ dmg:60,cd:4.5,radius:85,delay:0.9 },{ dmg:85,cd:4,radius:100,delay:0.8 },{ dmg:115,cd:3.5,radius:115,delay:0.7 },{ dmg:160,cd:3,radius:135,delay:0.6 },{ dmg:220,cd:2.5,radius:180,delay:0.5,evolved:true }], evolvedName:'Armageddon', evolvedIcon:'🌍' },
+  { id: 'spectral_whip', name: 'Spectral Whip', icon: '🗡️', maxLv: 6, desc: 'Sweeping arc in move direction',
+    stats: [{ dmg:14,cd:1.2,arc:1.2,range:80 },{ dmg:20,cd:1.1,arc:1.4,range:90 },{ dmg:28,cd:1.0,arc:1.6,range:100 },{ dmg:38,cd:0.9,arc:1.8,range:115 },{ dmg:52,cd:0.8,arc:2.0,range:130 },{ dmg:75,cd:0.6,arc:3.14,range:160,evolved:true }], evolvedName:'Void Cleaver', evolvedIcon:'⚔️' },
+  { id: 'shadow_clones', name: 'Shadow Clones', icon: '👤', maxLv: 6, desc: 'Clones that orbit and shoot',
+    stats: [{ count:1,dmg:8,fireRate:1.2,orbitR:80 },{ count:1,dmg:12,fireRate:1.0,orbitR:90 },{ count:2,dmg:14,fireRate:0.9,orbitR:95 },{ count:2,dmg:18,fireRate:0.8,orbitR:100 },{ count:3,dmg:24,fireRate:0.7,orbitR:110 },{ count:4,dmg:35,fireRate:0.5,orbitR:130,evolved:true }], evolvedName:'Legion', evolvedIcon:'👥' },
 ];
 
 // ─── Passive Upgrade Definitions ───
@@ -272,20 +271,24 @@ function newState() {
   const metaHp = save.upgrades.maxHp * 10;
   const baseHp = 100 + metaHp;
   return {
-    mode: 'menu', time: 0,
+    mode: 'menu', time: 0, runTime: 0,
     px: 0, py: 0, pvx: 0, pvy: 0, hp: baseHp, maxHp: baseHp,
+    lastMoveAngle: -Math.PI / 2, // default facing up
     xp: 0, xpToNext: XP_BASE, level: 1, invuln: 0, dmgFlash: 0,
     dmgMult: 1 + save.upgrades.damage * 0.05, speedMult: 1 + save.upgrades.speed * 0.04,
     xpMult: 1 + save.upgrades.xpGain * 0.08, magnetMult: 1 + save.upgrades.pickupRadius * 0.15,
     armor: save.upgrades.armor, regenRate: 0, critChance: 0.05, regenAccum: 0,
-    wave: 0, waveTimer: 0, waveEnemiesQueue: [], spawnTimer: 0,
+    wave: 0, waveTimer: 0, waveEnemiesQueue: [], spawnTimer: 0, waveClearBreather: 0,
     weapons: [], enemies: [], projectiles: [], gems: [], effects: [],
     particles: [], damageNums: [], lightningFx: [], beams: [],
     kills: 0, bossKills: 0, dustEarned: 0, passiveCounts: {},
-    trail: [], // player position trail
+    trail: [],
+    dpsStats: {}, // SourceId -> dmg accumulated
     combo: 0, comboTimer: 0, bestCombo: 0,
     ultCharge: 0, ultUsed: false,
     cloneTimers: [],
+    chests: [], hazardZones: [],
+    eliteModifiers: ['swift','armored','splitting','teleporter','berserker'],
     runAchievements: new Set(),
   };
 }
@@ -398,14 +401,13 @@ function fireDeathBlossom(wep) {
 
 function fireNovaPulse(wep) {
   const s = getWeaponStats(wep), baseDmg = Math.round(s.dmg * state.dmgMult);
-  for (const e of state.enemies) { if (dist(state.px, state.py, e.x, e.y) < s.radius + e.radius) dealDamage(e, baseDmg); }
-  state.effects.push({ type:'nova', x:state.px, y:state.py, radius:0, maxRadius:s.radius, life:0.4, maxLife:0.4, color:C.amber });
+  state.effects.push({ type:'nova', x:state.px, y:state.py, radius:0, maxRadius:s.radius, life:0.4, maxLife:0.4, color:C.amber, dmg:baseDmg, hit:new Set(), isDamaging:true, sourceId:wep.defId });
   cam.shake = Math.max(cam.shake, 6); playSound('hit');
 }
 
 function fireFrostRing(wep) {
   const s = getWeaponStats(wep), baseDmg = Math.round(s.dmg * state.dmgMult);
-  state.effects.push({ type:'frost_ring', x:state.px, y:state.py, radius:10, maxRadius:s.maxR, life:0.8, maxLife:0.8, dmg:baseDmg, slow:s.slow, slowDur:s.dur, hit:new Set(), color:C.ice });
+  state.effects.push({ type:'frost_ring', x:state.px, y:state.py, radius:10, maxRadius:s.maxR, life:0.8, maxLife:0.8, dmg:baseDmg, slow:s.slow, slowDur:s.dur, hit:new Set(), color:C.ice, sourceId:wep.defId });
 }
 
 function fireLightningChain(wep) {
@@ -414,7 +416,7 @@ function fireLightningChain(wep) {
   if (!first) return;
   const chain = [{ x:state.px, y:state.py }]; let current = first; const hit = new Set();
   for (let b = 0; b <= s.bounces && current; b++) {
-    hit.add(current); dealDamage(current, baseDmg); chain.push({ x:current.x, y:current.y });
+    hit.add(current); dealDamage(current, baseDmg, wep.defId); chain.push({ x:current.x, y:current.y });
     spawnParticles(current.x, current.y, C.cyan, 4, 80);
     let nextTarget = null, bestDist = s.range;
     for (const e of state.enemies) { if (hit.has(e) || e.hp <= 0) continue; const d = dist(current.x, current.y, e.x, e.y); if (d < bestDist) { bestDist = d; nextTarget = e; } }
@@ -427,26 +429,26 @@ function firePhantomMines(wep) {
   const s = getWeaponStats(wep);
   for (let i = 0; i < s.count; i++) {
     const a = Math.random() * TWO_PI, d = 20 + Math.random() * 30;
-    state.effects.push({ type:'mine', x:state.px+Math.cos(a)*d, y:state.py+Math.sin(a)*d, life:4, armTime:0.5, blastR:s.blastR, dmg:Math.round(s.dmg * state.dmgMult), triggered:false, color:C.amber });
+    state.effects.push({ type:'mine', x:state.px+Math.cos(a)*d, y:state.py+Math.sin(a)*d, life:4, armTime:0.5, blastR:s.blastR, dmg:Math.round(s.dmg * state.dmgMult), triggered:false, color:C.amber, sourceId:wep.defId });
   }
 }
 
 function fireGravityWell(wep) {
   const s = getWeaponStats(wep); const target = findNearest(state.px, state.py, state.enemies, 300);
   const tx = target ? target.x : state.px + (Math.random()-0.5)*200, ty = target ? target.y : state.py + (Math.random()-0.5)*200;
-  state.effects.push({ type:'gravity_well', x:tx, y:ty, radius:s.radius, pull:s.pull, dmg:s.dmg, life:s.dur, maxLife:s.dur, color:C.violet });
+  state.effects.push({ type:'gravity_well', x:tx, y:ty, radius:s.radius, pull:s.pull, dmg:s.dmg, life:s.dur, maxLife:s.dur, color:C.violet, dmgAccum:0, dmgInterval:0.5, dmgTimer:0, sourceId:wep.defId });
 }
 
 function firePlasmaBeam(wep) {
   const s = getWeaponStats(wep), baseDmg = Math.round(s.dmg * state.dmgMult);
   const target = findNearest(state.px, state.py, state.enemies, 500);
-  const a = target ? angle(state.px, state.py, target.x, target.y) : (state.pvx !== 0 || state.pvy !== 0 ? Math.atan2(state.pvy, state.pvx) : 0);
+  const a = target ? angle(state.px, state.py, target.x, target.y) : state.lastMoveAngle;
   const ex = state.px + Math.cos(a) * s.length, ey = state.py + Math.sin(a) * s.length;
   // Hit all enemies along the line
   for (const e of state.enemies) {
     if (e.dead || e.hp <= 0) continue;
     const d = pointToLineDist(e.x, e.y, state.px, state.py, ex, ey);
-    if (d < s.width + e.radius) dealDamage(e, baseDmg);
+    if (d < s.width + e.radius) dealDamage(e, baseDmg, wep.defId);
   }
   state.beams.push({ x1:state.px, y1:state.py, x2:ex, y2:ey, width:s.width, life:0.2, maxLife:0.2, color:C.fire });
   cam.shake = Math.max(cam.shake, 4);
@@ -464,19 +466,19 @@ function fireMeteorStrike(wep) {
   const target = findNearest(state.px, state.py, state.enemies, 400);
   const tx = target ? target.x + rand(-30,30) : state.px + rand(-150,150);
   const ty = target ? target.y + rand(-30,30) : state.py + rand(-150,150);
-  state.effects.push({ type:'meteor_warning', x:tx, y:ty, radius:s.radius, life:s.delay, maxLife:s.delay, dmg:Math.round(s.dmg * state.dmgMult), color:'#ff4060' });
+  state.effects.push({ type:'meteor_warning', x:tx, y:ty, radius:s.radius, life:s.delay, maxLife:s.delay, dmg:Math.round(s.dmg * state.dmgMult), color:'#ff4060', sourceId:wep.defId });
 }
 
 function fireSpectralWhip(wep) {
   const s = getWeaponStats(wep), baseDmg = Math.round(s.dmg * state.dmgMult);
-  const dir = (state.pvx !== 0 || state.pvy !== 0) ? Math.atan2(state.pvy, state.pvx) : 0;
+  const dir = state.lastMoveAngle;
   for (const e of state.enemies) {
     if (e.dead || e.hp <= 0) continue;
     const d = dist(state.px, state.py, e.x, e.y);
     if (d > s.range + e.radius) continue;
     const a = angle(state.px, state.py, e.x, e.y);
     let diff = a - dir; while (diff > Math.PI) diff -= TWO_PI; while (diff < -Math.PI) diff += TWO_PI;
-    if (Math.abs(diff) < s.arc / 2) dealDamage(e, baseDmg);
+    if (Math.abs(diff) < s.arc / 2) dealDamage(e, baseDmg, wep.defId);
   }
   state.effects.push({ type:'whip_arc', x:state.px, y:state.py, dir, arc:s.arc, range:s.range, life:0.2, maxLife:0.2, color:C.violet });
   playSound('hit');
@@ -497,7 +499,7 @@ function updateShadowClones(dt) {
       const target = findNearest(cx, cy, state.enemies, 250);
       if (target) {
         const ta = angle(cx, cy, target.x, target.y);
-        state.projectiles.push({ x:cx, y:cy, vx:Math.cos(ta)*350, vy:Math.sin(ta)*350, dmg:Math.round(s.dmg*state.dmgMult), radius:4, life:1.5, pierce:0, color:C.ice, owner:'clone', trail:[] });
+        state.projectiles.push({ x:cx, y:cy, vx:Math.cos(ta)*350, vy:Math.sin(ta)*350, dmg:Math.round(s.dmg*state.dmgMult), radius:4, life:1.5, pierce:0, color:C.ice, owner:wep.defId, trail:[] });
       }
     }
   }
@@ -532,8 +534,8 @@ function updateOrbitShards(dt) {
     const a = state.time * s.speed + (TWO_PI / s.count) * i;
     const sx = state.px + Math.cos(a) * s.radius, sy = state.py + Math.sin(a) * s.radius;
     for (const e of state.enemies) {
-      if (e.invuln > 0) continue;
-      if (dist(sx, sy, e.x, e.y) < s.size + e.radius) { dealDamage(e, baseDmg); e.invuln = 0.25; spawnParticles(sx, sy, C.violet, 3, 60); }
+      if (e.dead || e.hp <= 0 || e.invuln > 0) continue;
+      if (dist(sx, sy, e.x, e.y) < s.size + e.radius) { dealDamage(e, baseDmg, wep.defId); e.invuln = 0.25; spawnParticles(sx, sy, C.violet, 3, 60); }
     }
   }
 }
@@ -547,11 +549,27 @@ function findNearest(x, y, list, maxDist = Infinity) {
   return best;
 }
 
-function dealDamage(enemy, dmg) {
+function dealDamage(enemy, dmg, sourceId = null) {
   const isCrit = Math.random() < state.critChance;
   const finalDmg = isCrit ? Math.round(dmg * 1.8) : dmg;
   enemy.hp -= finalDmg; enemy.hitFlash = 0.1;
-  spawnDamageNum(enemy.x, enemy.y - enemy.radius, finalDmg, isCrit);
+  
+  // DPS Tracking
+  if (sourceId) {
+    if (!state.dpsStats[sourceId]) state.dpsStats[sourceId] = 0;
+    state.dpsStats[sourceId] += finalDmg;
+  }
+  
+  // Damage Number Stacking
+  if (enemy.recentDmgTimer > 0) {
+    enemy.recentDmg += finalDmg;
+    enemy.recentDmgCrit = enemy.recentDmgCrit || isCrit;
+  } else {
+    enemy.recentDmg = finalDmg;
+    enemy.recentDmgCrit = isCrit;
+    enemy.recentDmgTimer = 0.2; // 200ms stack window
+  }
+
   state.ultCharge = Math.min(ULT_MAX, state.ultCharge + finalDmg * 0.04);
   if (enemy.hp <= 0) killEnemy(enemy);
 }
@@ -643,23 +661,57 @@ function spawnEnemy(typeId) {
   if (state.enemies.length >= MAX_ENEMIES) return;
   const def = ENEMY_TYPES[typeId];
   const side = Math.random() * 4, margin = 80;
-  const hw = canvas.width / 2 + margin, hh = canvas.height / 2 + margin;
+  // Use CSS pixels, not physical canvas pixels (fixes DPR/Retina bug)
+  const hw = canvas.clientWidth / 2 + margin, hh = canvas.clientHeight / 2 + margin;
   let x, y;
   if (side < 1) { x = cam.x - hw; y = cam.y + rand(-hh, hh); }
   else if (side < 2) { x = cam.x + hw; y = cam.y + rand(-hh, hh); }
   else if (side < 3) { x = cam.x + rand(-hw, hw); y = cam.y - hh; }
   else { x = cam.x + rand(-hw, hw); y = cam.y + hh; }
   const hpScale = 1 + state.wave * 0.12, dmgScale = 1 + state.wave * 0.08;
-  state.enemies.push({ x, y, hp:Math.round(def.hp*hpScale), maxHp:Math.round(def.hp*hpScale), speed:def.speed, dmg:Math.round(def.dmg*dmgScale), radius:def.radius, color:def.color, def, hitFlash:0, invuln:0, slow:0, slowTimer:0, atkTimer:def.ranged?def.atkCd:0, chargeTimer:0, charging:false, dead:false });
+  // Determine elite modifier (small chance on non-boss enemies at wave 4+)
+  let elite = null;
+  if (!def.isBoss && state.wave >= 4 && Math.random() < 0.08 + state.wave * 0.005) {
+    elite = pick(state.eliteModifiers);
+  }
+  const e = { x, y, hp:Math.round(def.hp*hpScale), maxHp:Math.round(def.hp*hpScale), speed:def.speed, dmg:Math.round(def.dmg*dmgScale), radius:def.radius, color:def.color, def, hitFlash:0, invuln:0, slow:0, slowTimer:0, atkTimer:def.ranged?def.atkCd:0, chargeTimer:0, charging:false, dead:false, elite, teleportTimer:0, recentDmg:0, recentDmgTimer:0, recentDmgCrit:false };
+  // Apply elite modifiers
+  if (elite === 'swift') { e.speed *= 1.6; e.color = '#ffff00'; }
+  else if (elite === 'armored') { e.hp *= 2.5; e.maxHp *= 2.5; e.speed *= 0.7; e.color = '#8888aa'; }
+  else if (elite === 'berserker') { e.dmg *= 2; e.speed *= 1.2; e.color = '#ff3333'; }
+  else if (elite === 'teleporter') { e.teleportTimer = rand(2, 4); e.color = '#cc44ff'; }
+  // splitting is handled on death
+  state.enemies.push(e);
   if (def.isBoss) playSound('boss');
 }
 
 function updateEnemies(dt) {
+  if (state.mode !== 'playing') return;
   for (let i = state.enemies.length - 1; i >= 0; i--) {
     const e = state.enemies[i]; if (e.dead) { state.enemies.splice(i, 1); continue; }
+    
+    // Process Damage Stacking
+    if (e.recentDmgTimer > 0) {
+      e.recentDmgTimer -= dt;
+      if (e.recentDmgTimer <= 0) {
+        spawnDamageNum(e.x, e.y - e.radius, e.recentDmg, e.recentDmgCrit);
+        e.recentDmg = 0;
+      }
+    }
+
     e.hitFlash = Math.max(0, e.hitFlash - dt); e.invuln = Math.max(0, e.invuln - dt); e.slowTimer = Math.max(0, e.slowTimer - dt);
     const speedMod = e.slowTimer > 0 ? (1 - e.slow) : 1;
     const a = angle(e.x, e.y, state.px, state.py), d = dist(e.x, e.y, state.px, state.py);
+    // Elite: teleporter blinks toward player
+    if (e.elite === 'teleporter') {
+      e.teleportTimer -= dt;
+      if (e.teleportTimer <= 0) {
+        e.teleportTimer = rand(2.5, 4.5);
+        const tpDist = Math.min(d * 0.6, 150);
+        e.x += Math.cos(a) * tpDist; e.y += Math.sin(a) * tpDist;
+        spawnParticles(e.x, e.y, '#cc44ff', 8, 80);
+      }
+    }
     if (e.def.ranged) {
       const pDist = 180;
       if (d > pDist + 20) { e.x += Math.cos(a)*e.speed*speedMod*dt; e.y += Math.sin(a)*e.speed*speedMod*dt; }
@@ -674,6 +726,9 @@ function updateEnemies(dt) {
       if (e.charging) { e.chargeTimer -= dt; e.x += Math.cos(e.chargeAngle)*e.def.chargeSpeed*speedMod*dt; e.y += Math.sin(e.chargeAngle)*e.def.chargeSpeed*speedMod*dt; if (e.chargeTimer <= 0) { e.charging = false; e.chargeTimer = 2.5; } }
       else { e.chargeTimer -= dt; e.x += Math.cos(a)*e.speed*speedMod*dt; e.y += Math.sin(a)*e.speed*speedMod*dt; }
     } else { e.x += Math.cos(a)*e.speed*speedMod*dt; e.y += Math.sin(a)*e.speed*speedMod*dt; }
+    // Clamp enemies inside arena
+    e.x = clamp(e.x, -ARENA_HALF + e.radius, ARENA_HALF - e.radius);
+    e.y = clamp(e.y, -ARENA_HALF + e.radius, ARENA_HALF - e.radius);
     // Collision with player
     if (d < e.radius + PLAYER_RADIUS && state.invuln <= 0) {
       const rawDmg = Math.max(1, e.dmg - state.armor); state.hp -= rawDmg; state.invuln = INVULN_TIME; state.dmgFlash = DAMAGE_FLASH;
@@ -715,7 +770,93 @@ function updateWaves(dt) {
     }
   }
   state.waveTimer -= dt;
-  if (state.waveTimer <= 0 && state.waveEnemiesQueue.length === 0) startNextWave();
+  // Brief breathing period between waves
+  if (state.waveClearBreather > 0) { state.waveClearBreather -= dt; return; }
+  if (state.waveTimer <= 0 && state.waveEnemiesQueue.length === 0) {
+    // Spawn treasure chest on boss wave clears
+    if (state.wave > 0 && state.wave % BOSS_INTERVAL === 0) {
+      spawnChest(state.px + rand(-100, 100), state.py + rand(-100, 100), 'boss');
+    } else if (state.wave > 0 && state.wave % 3 === 0) {
+      spawnChest(state.px + rand(-150, 150), state.py + rand(-150, 150), 'normal');
+    }
+    // Spawn hazard zone every 4 waves
+    if (state.wave > 0 && state.wave % 4 === 0) spawnHazardZone();
+    state.waveClearBreather = 1.5; // 1.5s breathing room
+    startNextWave();
+  }
+}
+
+// ═══════════════════════════════════════════
+// TREASURE CHESTS
+// ═══════════════════════════════════════════
+function spawnChest(x, y, tier) {
+  state.chests.push({ x, y, tier, radius: 14, life: 25, collected: false, pulse: 0 });
+}
+
+function updateChests(dt) {
+  for (let i = state.chests.length - 1; i >= 0; i--) {
+    const c = state.chests[i];
+    c.life -= dt; c.pulse += dt;
+    if (c.life <= 0 || c.collected) { state.chests.splice(i, 1); continue; }
+    const d = dist(c.x, c.y, state.px, state.py);
+    if (d < c.radius + PLAYER_RADIUS + 10) {
+      c.collected = true;
+      // Rewards based on tier
+      if (c.tier === 'boss') {
+        state.hp = Math.min(state.hp + 30, state.maxHp);
+        state.dustEarned += 15 + state.wave * 2;
+        const gemCount = 8;
+        for (let j = 0; j < gemCount; j++) state.gems.push({ x:c.x+rand(-20,20), y:c.y+rand(-20,20), xp:5, radius:6, life:20 });
+      } else {
+        state.hp = Math.min(state.hp + 15, state.maxHp);
+        state.dustEarned += 5 + state.wave;
+        const gemCount = 4;
+        for (let j = 0; j < gemCount; j++) state.gems.push({ x:c.x+rand(-15,15), y:c.y+rand(-15,15), xp:3, radius:5, life:20 });
+      }
+      spawnParticles(c.x, c.y, C.amber, 16, 120);
+      state.effects.push({ type:'nova', x:c.x, y:c.y, radius:0, maxRadius:50, life:0.3, maxLife:0.3, color:C.amber });
+      playSound('achieve');
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// ARENA HAZARD ZONES
+// ═══════════════════════════════════════════
+function spawnHazardZone() {
+  const types = ['fire','ice','void'];
+  const type = pick(types);
+  const zx = rand(-ARENA_HALF * 0.6, ARENA_HALF * 0.6);
+  const zy = rand(-ARENA_HALF * 0.6, ARENA_HALF * 0.6);
+  state.hazardZones.push({ x:zx, y:zy, radius:rand(100,180), type, life:WAVE_DURATION * 2, maxLife:WAVE_DURATION * 2, dmgTimer:0 });
+}
+
+function updateHazardZones(dt) {
+  for (let i = state.hazardZones.length - 1; i >= 0; i--) {
+    const hz = state.hazardZones[i];
+    hz.life -= dt;
+    if (hz.life <= 0) { state.hazardZones.splice(i, 1); continue; }
+    hz.dmgTimer -= dt;
+    const pd = dist(hz.x, hz.y, state.px, state.py);
+    if (pd < hz.radius && hz.dmgTimer <= 0 && state.invuln <= 0) {
+      hz.dmgTimer = 0.8;
+      const hazDmg = Math.max(1, Math.round(3 + state.wave * 0.5) - state.armor);
+      state.hp -= hazDmg;
+      spawnDamageNum(state.px, state.py - PLAYER_RADIUS, hazDmg, false);
+      state.dmgFlash = DAMAGE_FLASH;
+      if (hz.type === 'ice') { state.pvx *= 0.3; state.pvy *= 0.3; }
+      if (state.hp <= 0) { gameOver(); return; }
+    }
+    // Hazards also slow/damage enemies inside them
+    for (const e of state.enemies) {
+      if (e.dead) continue;
+      const ed = dist(hz.x, hz.y, e.x, e.y);
+      if (ed < hz.radius) {
+        if (hz.type === 'ice') { e.slow = 0.5; e.slowTimer = 0.5; }
+        if (hz.type === 'fire' && Math.random() < dt * 2) { dealDamage(e, Math.round(2 + state.wave * 0.3)); }
+      }
+    }
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -793,7 +934,14 @@ function getUpgradeOptions() {
   const options = [];
   const owned = new Set(state.weapons.map(w => w.defId));
   for (const d of WEAPON_DEFS) { if (!owned.has(d.id)) options.push({ type:'new_weapon', weaponDef:d, name:d.name, icon:d.icon, desc:d.desc, levelLabel:'NEW' }); }
-  for (const wep of state.weapons) { if (wep.level < wep.def.maxLv - 1) options.push({ type:'weapon_upgrade', weaponId:wep.defId, name:wep.def.name, icon:wep.def.icon, desc:`Upgrade to Lv ${wep.level+2}`, levelLabel:`LV ${wep.level+1} → ${wep.level+2}` }); }
+  for (const wep of state.weapons) {
+    if (wep.level < wep.def.maxLv - 1) {
+      const isEvolution = wep.level === wep.def.maxLv - 2;
+      const optName = isEvolution ? wep.def.evolvedName : wep.def.name;
+      const optIcon = isEvolution ? wep.def.evolvedIcon : wep.def.icon;
+      options.push({ type:'weapon_upgrade', weaponId:wep.defId, name:optName, icon:optIcon, desc:isEvolution ? 'Weapon Evolution!' : `Upgrade to Lv ${wep.level+2}`, levelLabel:isEvolution ? 'EVOLVE' : `LV ${wep.level+1} → ${wep.level+2}` });
+    }
+  }
   for (const p of PASSIVE_DEFS) options.push({ type:'passive', passive:p, name:p.name, icon:p.icon, desc:'', levelLabel:'PASSIVE' });
   // Shuffle
   for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
@@ -829,14 +977,21 @@ function showLevelUpUI() {
 // EFFECTS UPDATE
 // ═══════════════════════════════════════════
 function updateEffects(dt) {
-  // Gravity wells
+  // Gravity wells — fixed damage accumulator
   for (const fx of state.effects) {
     if (fx.type !== 'gravity_well') continue;
-    const tickDmg = Math.round(fx.dmg * state.dmgMult * dt);
+    fx.dmgTimer = (fx.dmgTimer || 0) - dt;
+    const baseDmg = Math.round(fx.dmg * state.dmgMult);
     for (const e of state.enemies) {
+      if (e.dead) continue;
       const d = dist(fx.x, fx.y, e.x, e.y);
-      if (d < fx.radius && d > 5) { const a = angle(e.x, e.y, fx.x, fx.y); e.x += Math.cos(a)*fx.pull*dt; e.y += Math.sin(a)*fx.pull*dt; if (tickDmg > 0 && Math.random() < dt*3) dealDamage(e, tickDmg); }
+      if (d < fx.radius && d > 5) {
+        const a = angle(e.x, e.y, fx.x, fx.y);
+        e.x += Math.cos(a)*fx.pull*dt; e.y += Math.sin(a)*fx.pull*dt;
+        if (fx.dmgTimer <= 0) dealDamage(e, baseDmg, fx.sourceId);
+      }
     }
+    if (fx.dmgTimer <= 0) fx.dmgTimer = fx.dmgInterval || 0.5;
   }
   for (let i = state.effects.length - 1; i >= 0; i--) {
     const fx = state.effects[i];
@@ -846,7 +1001,7 @@ function updateEffects(dt) {
     if (fx.life <= 0 && fx.type === 'meteor_warning') {
       for (const e of state.enemies) {
         if (e.dead) continue;
-        if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) dealDamage(e, fx.dmg);
+        if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) dealDamage(e, fx.dmg, fx.sourceId);
       }
       state.effects.push({ type:'nova', x:fx.x, y:fx.y, radius:0, maxRadius:fx.radius*1.3, life:0.4, maxLife:0.4, color:'#ff4060' });
       spawnParticles(fx.x, fx.y, C.fire, 20, 150);
@@ -857,13 +1012,22 @@ function updateEffects(dt) {
     if (fx.life <= 0) { state.effects.splice(i, 1); continue; }
 
     switch (fx.type) {
-      case 'nova': fx.radius = fx.maxRadius * (1 - fx.life / fx.maxLife); break;
+      case 'nova':
+        fx.radius = fx.maxRadius * (1 - fx.life / fx.maxLife);
+        // Damaging novas sync visual with damage (Bug 12 fix)
+        if (fx.isDamaging && fx.hit) {
+          for (const e of state.enemies) {
+            if (e.dead || fx.hit.has(e)) continue;
+            if (dist(fx.x, fx.y, e.x, e.y) < fx.radius + e.radius) { fx.hit.add(e); dealDamage(e, fx.dmg, fx.sourceId); }
+          }
+        }
+        break;
       case 'frost_ring':
         fx.radius = lerp(10, fx.maxRadius, 1 - fx.life / fx.maxLife);
         for (const e of state.enemies) {
           if (e.dead || fx.hit.has(e)) continue;
           const d = dist(fx.x, fx.y, e.x, e.y);
-          if (Math.abs(d - fx.radius) < 20 + e.radius) { fx.hit.add(e); dealDamage(e, fx.dmg); e.slow = fx.slow; e.slowTimer = fx.slowDur; }
+          if (Math.abs(d - fx.radius) < 20 + e.radius) { fx.hit.add(e); dealDamage(e, fx.dmg, fx.sourceId); e.slow = fx.slow; e.slowTimer = fx.slowDur; }
         }
         break;
       case 'mine':
@@ -874,7 +1038,7 @@ function updateEffects(dt) {
         }
         if (fx.triggered && !fx.exploded) {
           fx.exploded = true;
-          for (const e of state.enemies) { if (!e.dead && dist(fx.x, fx.y, e.x, e.y) < fx.blastR + e.radius) dealDamage(e, fx.dmg); }
+          for (const e of state.enemies) { if (!e.dead && dist(fx.x, fx.y, e.x, e.y) < fx.blastR + e.radius) dealDamage(e, fx.dmg, fx.sourceId); }
           state.effects.push({ type:'nova', x:fx.x, y:fx.y, radius:0, maxRadius:fx.blastR, life:0.3, maxLife:0.3, color:'#ff8c42' });
           cam.shake = Math.max(cam.shake, 5); fx.life = 0;
         }
@@ -894,6 +1058,7 @@ function updateEffects(dt) {
 // PROJECTILE & GEM UPDATE
 // ═══════════════════════════════════════════
 function updateProjectiles(dt) {
+  if (state.mode !== 'playing') return;
   for (let i = state.projectiles.length - 1; i >= 0; i--) {
     const p = state.projectiles[i]; p.life -= dt; if (p.life <= 0) { state.projectiles.splice(i, 1); continue; }
     p.x += p.vx * dt; p.y += p.vy * dt;
@@ -910,7 +1075,7 @@ function updateProjectiles(dt) {
       for (const e of state.enemies) {
         if (e.dead || e.hp <= 0) continue;
         if (dist(p.x, p.y, e.x, e.y) < p.radius + e.radius) {
-          dealDamage(e, p.dmg); spawnParticles(p.x, p.y, p.color, 3, 50);
+          dealDamage(e, p.dmg, p.owner); spawnParticles(p.x, p.y, p.color, 3, 50);
           if (p.pierce > 0) p.pierce--; else { state.projectiles.splice(i, 1); } break;
         }
       }
@@ -932,6 +1097,7 @@ function updateGems(dt) {
 // PLAYER UPDATE
 // ═══════════════════════════════════════════
 function updatePlayer(dt) {
+  state.runTime += dt;
   let mx = 0, my = 0;
   if (input['a'] || input['arrowleft']) mx -= 1;
   if (input['d'] || input['arrowright']) mx += 1;
@@ -942,14 +1108,16 @@ function updatePlayer(dt) {
   // Normalize diagonal so it's not faster than cardinal
   const mag = Math.sqrt(mx * mx + my * my);
   if (mag > 1) { mx /= mag; my /= mag; }
+  // Track last move angle for weapon fallback direction (Bug 4 fix)
+  if (mx !== 0 || my !== 0) state.lastMoveAngle = Math.atan2(my, mx);
   const speed = PLAYER_SPEED_BASE * state.speedMult;
   state.pvx = lerp(state.pvx, mx * speed, 1 - Math.pow(0.0001, dt));
   state.pvy = lerp(state.pvy, my * speed, 1 - Math.pow(0.0001, dt));
   state.px += state.pvx * dt; state.py += state.pvy * dt;
   state.px = clamp(state.px, -ARENA_HALF, ARENA_HALF); state.py = clamp(state.py, -ARENA_HALF, ARENA_HALF);
   state.invuln = Math.max(0, state.invuln - dt); state.dmgFlash = Math.max(0, state.dmgFlash - dt);
-  // Regen
-  if (state.regenRate > 0) { state.regenAccum += state.regenRate * dt; if (state.regenAccum >= 1) { const heal = Math.floor(state.regenAccum); state.hp = Math.min(state.hp + heal, state.maxHp); state.regenAccum -= heal; } }
+  // Regen (only if alive — Bug 7 fix)
+  if (state.regenRate > 0 && state.hp > 0) { state.regenAccum += state.regenRate * dt; if (state.regenAccum >= 1) { const heal = Math.floor(state.regenAccum); state.hp = Math.min(state.hp + heal, state.maxHp); state.regenAccum -= heal; } }
   // Trail
   state.trail.push({ x: state.px, y: state.py, t: state.time });
   if (state.trail.length > TRAIL_LENGTH) state.trail.shift();
@@ -960,6 +1128,7 @@ function updatePlayer(dt) {
 // ═══════════════════════════════════════════
 function startGame() {
   initAudio(); state = newState(); state.mode = 'playing';
+  input = {}; // Reset input state (Bug 5 fix)
   state.weapons.push(createWeaponInstance('void_bolt', 0));
   cam.x = 0; cam.y = 0; cam.shake = 0;
   menuEl.classList.add('hidden'); gameoverModal.classList.add('hidden'); levelupModal.classList.add('hidden');
@@ -974,6 +1143,8 @@ function gameOver() {
   save.totalKills += state.kills; save.totalRuns++; persistSave();
   goWave.textContent = state.wave; goKills.textContent = state.kills;
   goLevel.textContent = state.level; goDust.textContent = `+${state.dustEarned}`;
+  const rMin = Math.floor(state.runTime / 60), rSec = Math.floor(state.runTime % 60);
+  document.getElementById('go-time').textContent = `${rMin}:${rSec < 10 ? '0' : ''}${rSec}`;
   goCombo.textContent = state.bestCombo;
   gameoverModal.classList.remove('hidden');
 }
@@ -1001,7 +1172,16 @@ function syncHUD() {
   waveDisplay.textContent = `WAVE ${state.wave}`;
   const secs = Math.max(0, Math.ceil(state.waveTimer));
   waveTimerEl.textContent = `0:${secs < 10 ? '0' : ''}${secs}`;
+  const rMin = Math.floor(state.runTime / 60), rSec = Math.floor(state.runTime % 60);
+  document.getElementById('run-timer').textContent = `${rMin < 10 ? '0' : ''}${rMin}:${rSec < 10 ? '0' : ''}${rSec}`;
   killsEl.textContent = state.kills; runDustEl.textContent = state.dustEarned;
+  
+  // Update DPS tooltips
+  const slots = weaponBarEl.children;
+  for (let i = 0; i < state.weapons.length; i++) {
+    const wep = state.weapons[i];
+    if (slots[i]) slots[i].dataset.dps = Math.round((state.dpsStats[wep.defId] || 0) / Math.max(1, state.runTime));
+  }
   // Vignette HP feedback
   const hpPct = state.hp / state.maxHp;
   vignetteEl.classList.remove('danger', 'critical');
@@ -1012,8 +1192,12 @@ function syncHUD() {
 function syncWeaponBar() {
   weaponBarEl.innerHTML = '';
   for (const wep of state.weapons) {
+    const isEvolved = wep.level >= wep.def.maxLv - 1;
+    const icon = isEvolved ? wep.def.evolvedIcon : wep.def.icon;
     const slot = document.createElement('div'); slot.className = 'weapon-slot';
-    slot.innerHTML = `${wep.def.icon}<span class="wep-level">${wep.level + 1}</span>`;
+    if (isEvolved) slot.classList.add('evolved');
+    slot.innerHTML = `${icon}<span class="wep-level">${isEvolved ? 'MAX' : wep.level + 1}</span>`;
+    slot.dataset.dps = Math.round((state.dpsStats[wep.defId] || 0) / Math.max(1, state.runTime));
     weaponBarEl.appendChild(slot);
   }
 }
@@ -1296,6 +1480,7 @@ function update(dt) {
   state.time += dt;
   updatePlayer(dt); updateCamera(dt); updateWeapons(dt); updateOrbitShards(dt); updateShadowClones(dt);
   updateProjectiles(dt); updateEnemies(dt); updateGems(dt); updateEffects(dt); updateParticles(dt);
+  updateChests(dt); updateHazardZones(dt);
   updateWaves(dt); updateCombo(dt); syncHUD();
   // Update ambient particles
   for (const ap of ambientParticles) { ap.x += ap.vx * dt; ap.y += ap.vy * dt; if (ap.x < -ARENA_HALF) ap.x = ARENA_HALF; if (ap.x > ARENA_HALF) ap.x = -ARENA_HALF; if (ap.y < -ARENA_HALF) ap.y = ARENA_HALF; if (ap.y > ARENA_HALF) ap.y = -ARENA_HALF; }
